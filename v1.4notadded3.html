@@ -1,0 +1,1500 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Worlds. — Animated Theme Navigation</title>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --transition: 4.5s;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    padding: 20px 0 35px;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    background:
+        radial-gradient(ellipse at 50% 0%, #172554 0%, transparent 55%),
+        #030712;
+}
+
+.page-header {
+    text-align: center;
+    margin: 0 12px 24px;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: clamp(38px, 5vw, 54px);
+    font-weight: 800;
+    letter-spacing: -2px;
+    color: #f8fafc;
+    text-shadow: 0 0 25px #818cf866;
+}
+
+.page-header h1 span {
+    color: #a78bfa;
+}
+
+.page-header p {
+    margin: 3px 0 0;
+    color: #a5b4fc;
+    font-size: 11px;
+    letter-spacing: 2px;
+}
+
+/* Original full gallery structure */
+
+.nav-gallery {
+    width: min(1500px, 97%);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 16px;
+}
+
+/* Original horizontal navbar */
+
+.theme-nav {
+    --bg: #071426;
+    --accent: #60a5fa;
+    --secondary: #0c4a6e;
+    --glow: #60a5fa;
+    --orb-light: #dbeafe;
+    --orb-mid: #2563eb;
+    --orb-dark: #07152f;
+    --surface: none;
+
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    width: 100%;
+    height: 76px;
+    min-width: 0;
+    padding: 8px 12px;
+
+    overflow: hidden;
+    border: 1px solid var(--accent);
+    border-radius: 15px;
+
+    background: var(--bg);
+    box-shadow:
+        0 0 12px color-mix(in srgb, var(--accent) 18%, transparent),
+        inset 0 0 20px #0005;
+
+    transition:
+        border-color var(--transition) ease,
+        box-shadow var(--transition) ease;
+}
+
+/* Background transition layers */
+
+.environment-layer {
+    position: absolute;
+    inset: 0;
+    z-index: -5;
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse at 55% 125%,
+            var(--secondary),
+            transparent 68%
+        ),
+        linear-gradient(105deg, var(--bg), #020617);
+
+    transition: opacity var(--transition) ease;
+}
+
+.environment-layer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: .65;
+
+    background:
+        radial-gradient(circle at 82% 18%, #fff 0 1px, transparent 2px),
+        radial-gradient(circle at 72% 45%, #ffffffa8 0 1px, transparent 2px),
+        radial-gradient(circle at 94% 30%, #fff 0 1px, transparent 2px),
+        radial-gradient(circle at 55% 16%, #ffffffc9 0 1px, transparent 2px),
+        radial-gradient(circle at 43% 36%, #fff 0 1px, transparent 2px);
+}
+
+.environment-layer.second {
+    opacity: 0;
+}
+
+.theme-nav.changing .environment-layer.first {
+    opacity: 0;
+}
+
+.theme-nav.changing .environment-layer.second {
+    opacity: 1;
+}
+
+.environment-atmosphere {
+    position: absolute;
+    z-index: -4;
+    inset: 0;
+    pointer-events: none;
+
+    background:
+        linear-gradient(0deg, var(--secondary) 0%, transparent 60%),
+        linear-gradient(90deg, var(--bg), transparent 50%, var(--bg));
+
+    transition: background var(--transition) ease;
+}
+
+.environment-horizon {
+    position: absolute;
+    z-index: -3;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+
+    background:
+        radial-gradient(ellipse at 50% 115%, #fb923c66, transparent 60%),
+        linear-gradient(0deg, #f9731622, transparent 75%);
+
+    transition: opacity 1.1s ease;
+}
+
+.theme-nav.changing .environment-horizon {
+    opacity: 1;
+}
+
+/* =========================================
+   LEFT SCENE — MORE REALISTIC ORB ICONS
+   Same position and animation concept.
+========================================= */
+
+.scene {
+    position: absolute;
+    z-index: -1;
+    left: 10px;
+    top: 50%;
+    width: 105px;
+    height: 105px;
+    transform: translateY(-50%);
+    pointer-events: none;
+
+    display: grid;
+    place-items: center;
+}
+
+.scene-icon {
+    --orb-size: 88px;
+
+    position: relative;
+    display: block;
+    flex-shrink: 0;
+
+    width: var(--orb-size);
+    height: var(--orb-size);
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 27% 22%,
+            #ffffff 0%,
+            #ffffffc9 2%,
+            #ffffff52 7%,
+            transparent 22%
+        ),
+        radial-gradient(
+            circle at 31% 28%,
+            var(--orb-light) 0%,
+            var(--orb-mid) 46%,
+            var(--orb-dark) 83%,
+            #000 100%
+        );
+
+    box-shadow:
+        inset -12px -9px 18px #000c,
+        inset 4px 3px 9px #ffffff45,
+        0 0 8px var(--glow),
+        0 0 23px color-mix(in srgb, var(--glow) 50%, transparent);
+}
+
+/* Realistic surface texture, rather than emoji */
+
+.scene-icon::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    overflow: hidden;
+
+    background: var(--surface);
+
+    box-shadow:
+        inset -5px -4px 8px #0005,
+        inset 2px 2px 5px #ffffff20;
+}
+
+/* Atmospheric edge */
+
+.scene-icon::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+
+    border: 1px solid color-mix(in srgb, var(--glow) 65%, transparent);
+    box-shadow: inset 0 0 7px color-mix(in srgb, var(--glow) 50%, transparent);
+    opacity: .85;
+}
+
+/* Mars: iron-rich red terrain and dark craters */
+
+.scene-icon.mars {
+    --orb-light: #ffc0a0;
+    --orb-mid: #c64b32;
+    --orb-dark: #4e1715;
+    --glow: #fb735b;
+
+    --surface:
+        radial-gradient(ellipse at 66% 27%, #60251f 0 5%, transparent 6%),
+        radial-gradient(ellipse at 32% 55%, #ed9877 0 5%, transparent 10%),
+        radial-gradient(ellipse at 72% 68%, #471915 0 8%, transparent 10%),
+        radial-gradient(ellipse at 43% 79%, #e78b69 0 5%, transparent 9%),
+        radial-gradient(ellipse at 55% 42%, #823025 0 8%, transparent 13%),
+        repeating-linear-gradient(155deg, transparent 0 13px, #ffffff0b 14px 15px, transparent 16px 22px);
+}
+
+/* Venus: thick golden cloud layers */
+
+.scene-icon.venus {
+    --orb-light: #fff1c2;
+    --orb-mid: #d99a52;
+    --orb-dark: #71381d;
+    --glow: #fdba74;
+
+    --surface:
+        repeating-linear-gradient(160deg, transparent 0 8px, #fff2c744 9px 12px, transparent 13px 19px),
+        radial-gradient(ellipse at 68% 40%, #8f4a2777 0 10%, transparent 23%),
+        radial-gradient(ellipse at 32% 65%, #f8d38b77 0 10%, transparent 24%);
+}
+
+/* Sun: luminous star surface */
+
+.scene-icon.sun {
+    --orb-size: 89px;
+    --orb-light: #fffde1;
+    --orb-mid: #ffad13;
+    --orb-dark: #d83404;
+    --glow: #ffb21c;
+
+    box-shadow:
+        inset -8px -7px 15px #a52c04a8,
+        inset 4px 3px 12px #fff9,
+        0 0 18px #fb923c,
+        0 0 38px #f9731677;
+
+    --surface:
+        radial-gradient(ellipse at 62% 38%, #c94a0d55 0 8%, transparent 19%),
+        radial-gradient(ellipse at 36% 60%, #ffe78d 0 5%, transparent 15%),
+        repeating-radial-gradient(ellipse at 40% 45%, transparent 0 8px, #ffdc5344 9px 11px, transparent 12px 16px);
+}
+
+/* Moon: shaded grey rock and craters */
+
+.scene-icon.moon {
+    --orb-light: #ffffff;
+    --orb-mid: #a9b1c0;
+    --orb-dark: #303746;
+    --glow: #cbd5e1;
+
+    --surface:
+        radial-gradient(circle at 65% 25%, #566171 0 6%, #ffffff1a 7%, transparent 11%),
+        radial-gradient(circle at 31% 44%, #4d5868 0 8%, #ffffff20 9%, transparent 13%),
+        radial-gradient(circle at 70% 66%, #4b5563 0 7%, #ffffff20 8%, transparent 12%),
+        radial-gradient(circle at 40% 75%, #657080 0 5%, transparent 10%),
+        radial-gradient(circle at 53% 48%, #ffffff2a 0 4%, transparent 10%);
+}
+
+/* Earth: oceans, land masses and clouds */
+
+.scene-icon.earth {
+    --orb-light: #7dd3fc;
+    --orb-mid: #1166ba;
+    --orb-dark: #061b49;
+    --glow: #38bdf8;
+
+    --surface:
+        radial-gradient(ellipse at 62% 28%, #76bb54 0 8%, transparent 9%),
+        radial-gradient(ellipse at 48% 44%, #9acb68 0 9%, transparent 10%),
+        radial-gradient(ellipse at 30% 56%, #4e9b55 0 12%, transparent 13%),
+        radial-gradient(ellipse at 70% 68%, #80bd5a 0 8%, transparent 9%),
+        radial-gradient(ellipse at 38% 23%, #ffffffc7 0 3%, transparent 18%),
+        radial-gradient(ellipse at 60% 78%, #ffffff9e 0 3%, transparent 16%);
+}
+
+/* Day: warm golden sphere */
+
+.scene-icon.day {
+    --orb-light: #fffde1;
+    --orb-mid: #facc15;
+    --orb-dark: #b45309;
+    --glow: #fde047;
+
+    --surface:
+        radial-gradient(ellipse at 65% 31%, #ffffff60 0 8%, transparent 18%),
+        radial-gradient(ellipse at 36% 65%, #f59e0b55 0 11%, transparent 25%);
+}
+
+/* Night: deep indigo sphere */
+
+.scene-icon.night {
+    --orb-light: #dbeafe;
+    --orb-mid: #334c8a;
+    --orb-dark: #080c27;
+    --glow: #818cf8;
+
+    --surface:
+        radial-gradient(circle at 60% 30%, #ffffff 0 1px, transparent 2px),
+        radial-gradient(circle at 35% 58%, #c7d2fe 0 1px, transparent 2px),
+        radial-gradient(ellipse at 62% 70%, #818cf833 0 10%, transparent 25%);
+}
+
+/* Summer: warm, golden planetary surface */
+
+.scene-icon.summer {
+    --orb-light: #fff4bd;
+    --orb-mid: #e9a323;
+    --orb-dark: #8c3e10;
+    --glow: #fbbf24;
+
+    --surface:
+        repeating-linear-gradient(155deg, transparent 0 11px, #fff4bd30 12px 14px, transparent 15px 21px),
+        radial-gradient(ellipse at 65% 58%, #9e4e1755 0 9%, transparent 20%);
+}
+
+/* Winter: frosted ice world */
+
+.scene-icon.winter {
+    --orb-light: #ffffff;
+    --orb-mid: #9bd6f2;
+    --orb-dark: #234d80;
+    --glow: #bae6fd;
+
+    --surface:
+        radial-gradient(ellipse at 65% 35%, #ffffffbb 0 5%, transparent 15%),
+        radial-gradient(ellipse at 30% 62%, #e0f2feaa 0 10%, transparent 22%),
+        repeating-linear-gradient(145deg, transparent 0 12px, #ffffff28 13px 15px, transparent 16px 23px);
+}
+
+/* Forest: deep green sphere with organic textures */
+
+.scene-icon.forest {
+    --orb-light: #bbf7d0;
+    --orb-mid: #15803d;
+    --orb-dark: #052e16;
+    --glow: #4ade80;
+
+    --surface:
+        radial-gradient(ellipse at 60% 32%, #a3e63577 0 9%, transparent 18%),
+        radial-gradient(ellipse at 32% 55%, #14532d 0 14%, transparent 24%),
+        radial-gradient(ellipse at 70% 70%, #86efac44 0 9%, transparent 20%),
+        repeating-linear-gradient(145deg, transparent 0 13px, #ffffff0c 14px 15px, transparent 16px 22px);
+}
+
+/* Desert: sandy surface and dunes */
+
+.scene-icon.desert {
+    --orb-light: #fef3c7;
+    --orb-mid: #d18b35;
+    --orb-dark: #713f12;
+    --glow: #fbbf24;
+
+    --surface:
+        repeating-linear-gradient(165deg, transparent 0 8px, #fff0bc70 9px 12px, transparent 13px 20px),
+        radial-gradient(ellipse at 70% 68%, #8b451355 0 12%, transparent 24%);
+}
+
+/* Ocean: deep blue, currents and sea-like patterns */
+
+.scene-icon.ocean {
+    --orb-light: #a5f3fc;
+    --orb-mid: #0284c7;
+    --orb-dark: #082f49;
+    --glow: #22d3ee;
+
+    --surface:
+        repeating-linear-gradient(150deg, transparent 0 9px, #bae6fd36 10px 12px, transparent 13px 21px),
+        radial-gradient(ellipse at 65% 40%, #164e6377 0 12%, transparent 25%),
+        radial-gradient(ellipse at 35% 70%, #67e8f944 0 8%, transparent 20%);
+}
+
+/* Mountain: rocky, cool-toned sphere */
+
+.scene-icon.mountain {
+    --orb-light: #e2e8f0;
+    --orb-mid: #64748b;
+    --orb-dark: #1e293b;
+    --glow: #94a3b8;
+
+    --surface:
+        linear-gradient(145deg, transparent 40%, #e2e8f077 41% 44%, transparent 45%),
+        linear-gradient(35deg, transparent 48%, #0f172a88 49% 55%, transparent 56%),
+        radial-gradient(ellipse at 60% 60%, #cbd5e155 0 7%, transparent 20%);
+}
+
+/* City: dark sphere with glowing urban lights */
+
+.scene-icon.city {
+    --orb-light: #a5b4fc;
+    --orb-mid: #373b68;
+    --orb-dark: #090c24;
+    --glow: #818cf8;
+
+    --surface:
+        radial-gradient(circle at 35% 38%, #fde68a 0 1px, transparent 3px),
+        radial-gradient(circle at 60% 45%, #fef08a 0 1px, transparent 3px),
+        radial-gradient(circle at 45% 66%, #fbbf24 0 1px, transparent 3px),
+        radial-gradient(circle at 72% 61%, #93c5fd 0 1px, transparent 3px),
+        radial-gradient(circle at 29% 69%, #fde68a 0 1px, transparent 3px);
+}
+
+/* Village: warm earthy surface */
+
+.scene-icon.village {
+    --orb-light: #fde68a;
+    --orb-mid: #9a7449;
+    --orb-dark: #392516;
+    --glow: #d6a76c;
+
+    --surface:
+        radial-gradient(circle at 38% 45%, #fef3c7 0 2px, transparent 4px),
+        radial-gradient(circle at 62% 58%, #fcd34d 0 2px, transparent 4px),
+        radial-gradient(ellipse at 40% 72%, #65a30d55 0 9%, transparent 20%);
+}
+
+/* Retro: warm metallic sphere */
+
+.scene-icon.retro {
+    --orb-light: #ffd5a5;
+    --orb-mid: #bd5b46;
+    --orb-dark: #44204f;
+    --glow: #fb7185;
+
+    --surface:
+        repeating-linear-gradient(0deg, transparent 0 10px, #fda4af33 11px 12px, transparent 13px 18px),
+        radial-gradient(ellipse at 65% 30%, #fef3c766 0 9%, transparent 20%);
+}
+
+/* Futuristic: metallic blue with glowing lines */
+
+.scene-icon.futuristic {
+    --orb-light: #dbeafe;
+    --orb-mid: #2563eb;
+    --orb-dark: #08122f;
+    --glow: #22d3ee;
+
+    --surface:
+        repeating-linear-gradient(45deg, transparent 0 13px, #67e8f933 14px 16px, transparent 17px 24px),
+        repeating-linear-gradient(135deg, transparent 0 18px, #ffffff18 19px 20px, transparent 21px 28px),
+        radial-gradient(ellipse at 60% 45%, #67e8f944, transparent 40%);
+}
+
+/* Galaxy: spiral-like luminous arms */
+
+.scene-icon.galaxy {
+    --orb-light: #f5d0fe;
+    --orb-mid: #7c3aed;
+    --orb-dark: #160e4d;
+    --glow: #c084fc;
+
+    --surface:
+        radial-gradient(ellipse at 50% 50%, #fff 0 2%, #f5d0fe 3% 6%, transparent 7%),
+        repeating-radial-gradient(ellipse at 50% 50%, transparent 0 7px, #e9d5ff40 8px 10px, transparent 11px 16px),
+        radial-gradient(ellipse at 25% 70%, #f0abfc77, transparent 35%);
+}
+
+/* Nebula: colorful cloud layers */
+
+.scene-icon.nebula {
+    --orb-light: #f5d0fe;
+    --orb-mid: #a21caf;
+    --orb-dark: #35083d;
+    --glow: #e879f9;
+
+    --surface:
+        radial-gradient(ellipse at 35% 40%, #f0abfc99 0 10%, transparent 27%),
+        radial-gradient(ellipse at 67% 56%, #818cf899 0 12%, transparent 31%),
+        radial-gradient(ellipse at 45% 75%, #fb718555 0 10%, transparent 25%);
+}
+
+/* Storm: dark blue orb with swirling storm bands */
+
+.scene-icon.storm {
+    --orb-light: #cbd5e1;
+    --orb-mid: #475569;
+    --orb-dark: #111827;
+    --glow: #94a3b8;
+
+    --surface:
+        repeating-linear-gradient(155deg, transparent 0 8px, #cbd5e144 9px 12px, transparent 13px 19px),
+        radial-gradient(ellipse at 65% 45%, #020617aa 0 12%, transparent 25%);
+}
+
+/* Clear: bright blue atmosphere */
+
+.scene-icon.clear {
+    --orb-light: #dbeafe;
+    --orb-mid: #38bdf8;
+    --orb-dark: #075985;
+    --glow: #7dd3fc;
+
+    --surface:
+        radial-gradient(ellipse at 65% 30%, #ffffffbb 0 5%, transparent 17%),
+        radial-gradient(ellipse at 38% 62%, #ffffff66 0 4%, transparent 16%);
+}
+
+/* Beach: turquoise and sandy bands */
+
+.scene-icon.beach {
+    --orb-light: #ccfbf1;
+    --orb-mid: #0d9488;
+    --orb-dark: #134e4a;
+    --glow: #5eead4;
+
+    --surface:
+        linear-gradient(160deg, transparent 0 55%, #fcd9a077 56% 67%, transparent 68%),
+        radial-gradient(ellipse at 30% 35%, #a5f3fc88 0 8%, transparent 20%);
+}
+
+/* Snow: pale frozen surface */
+
+.scene-icon.snow {
+    --orb-light: #ffffff;
+    --orb-mid: #bfdbfe;
+    --orb-dark: #334155;
+    --glow: #e0f2fe;
+
+    --surface:
+        radial-gradient(ellipse at 65% 27%, #fff 0 8%, transparent 19%),
+        radial-gradient(ellipse at 30% 65%, #ffffffaa 0 11%, transparent 23%),
+        repeating-linear-gradient(140deg, transparent 0 12px, #ffffff40 13px 14px, transparent 15px 23px);
+}
+
+/* Space: dark cosmic sphere */
+
+.scene-icon.space {
+    --orb-light: #c4b5fd;
+    --orb-mid: #312e81;
+    --orb-dark: #030712;
+    --glow: #818cf8;
+
+    --surface:
+        radial-gradient(circle at 65% 25%, #fff 0 1px, transparent 2px),
+        radial-gradient(circle at 35% 54%, #ddd6fe 0 1px, transparent 2px),
+        radial-gradient(circle at 72% 68%, #f5d0fe 0 1px, transparent 2px),
+        radial-gradient(ellipse at 40% 70%, #7c3aed55, transparent 40%);
+}
+
+/* Scene animation remains in place */
+
+.scene-icon.leaving {
+    animation: planet-set 1.5s ease-in forwards;
+}
+
+.scene-icon.rising {
+    animation: planet-rise 1.85s cubic-bezier(.2,.8,.2,1) forwards;
+}
+
+@keyframes planet-set {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(100px) scale(.72);
+        opacity: 0;
+    }
+}
+
+@keyframes planet-rise {
+    0% {
+        transform: translateY(100px) scale(.72);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Original theme name and caption */
+
+.theme-info {
+    position: relative;
+    z-index: 2;
+    flex: 0 0 112px;
+    min-width: 0;
+    margin-left: 1px;
+    text-shadow: 0 2px 5px #000;
+}
+
+.theme-info h2 {
+    margin: 0 0 4px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.theme-info p {
+    margin: 0;
+    color: #dbeafe;
+    font-size: 10px;
+    line-height: 1.2;
+}
+
+/* Original navigation links */
+
+.nav-links {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+}
+
+.nav-links a {
+    padding: 8px 8px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+
+    color: #f8fafc;
+    font-size: 11px;
+    text-decoration: none;
+    white-space: nowrap;
+    text-shadow: 0 1px 4px #000;
+
+    transition:
+        background .25s ease,
+        border-color .25s ease,
+        transform .25s ease;
+}
+
+.nav-links a:hover {
+    transform: translateY(-2px);
+    background: color-mix(in srgb, var(--accent) 30%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+.nav-links a.active {
+    background: color-mix(in srgb, var(--accent) 24%, #020617);
+    border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+/* Original right-side theme toggle */
+
+.theme-switch {
+    position: relative;
+    z-index: 4;
+    flex: 0 0 83px;
+    height: 38px;
+    padding: 3px;
+
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    border: 1px solid color-mix(in srgb, var(--accent) 80%, white);
+    border-radius: 30px;
+    background: #020617eF;
+
+    box-shadow:
+        0 0 10px color-mix(in srgb, var(--accent) 28%, transparent),
+        inset 0 0 8px #ffffff08;
+}
+
+.theme-switch button {
+    position: relative;
+    display: grid;
+    place-items: center;
+
+    width: 29px;
+    height: 29px;
+    padding: 0;
+    flex-shrink: 0;
+
+    border: 1px solid #ffffff28;
+    border-radius: 50%;
+    background: #0f172a;
+    cursor: pointer;
+
+    transition:
+        transform .3s ease,
+        border-color .3s ease,
+        box-shadow .3s ease;
+}
+
+.theme-switch button:hover {
+    transform: scale(1.1);
+}
+
+.theme-switch button.selected {
+    border-color: #ffffffc7;
+    box-shadow: 0 0 9px var(--accent);
+}
+
+/* Realistic small icons inside the toggle */
+
+.mini-orb {
+    --orb-light: #dbeafe;
+    --orb-mid: #2563eb;
+    --orb-dark: #07152f;
+    --glow: #60a5fa;
+    --surface: none;
+
+    position: relative;
+    display: block;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+
+    background:
+        radial-gradient(circle at 27% 22%, #fff 0%, #ffffffa8 4%, transparent 22%),
+        radial-gradient(circle at 31% 28%, var(--orb-light), var(--orb-mid) 48%, var(--orb-dark) 100%);
+
+    box-shadow:
+        inset -3px -3px 5px #000b,
+        inset 2px 2px 3px #ffffff4a,
+        0 0 4px var(--glow);
+}
+
+.mini-orb::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--surface);
+}
+
+.mini-orb::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border: 1px solid color-mix(in srgb, var(--glow) 65%, transparent);
+    border-radius: 50%;
+}
+
+/* Small theme icon colors */
+
+.mini-orb.mars {
+    --orb-light: #ffc0a0;
+    --orb-mid: #c64b32;
+    --orb-dark: #4e1715;
+    --glow: #fb735b;
+    --surface: radial-gradient(circle at 65% 35%, #54221b 0 12%, transparent 15%), radial-gradient(circle at 35% 65%, #f7ad87 0 8%, transparent 14%);
+}
+
+.mini-orb.venus {
+    --orb-light: #fff1c2;
+    --orb-mid: #d99a52;
+    --orb-dark: #71381d;
+    --glow: #fdba74;
+    --surface: repeating-linear-gradient(160deg, transparent 0 4px, #fff3cf66 5px 6px, transparent 7px 10px);
+}
+
+.mini-orb.sun,
+.mini-orb.day,
+.mini-orb.summer,
+.mini-orb.clear {
+    --orb-light: #fffde1;
+    --orb-mid: #facc15;
+    --orb-dark: #b45309;
+    --glow: #fde047;
+}
+
+.mini-orb.moon,
+.mini-orb.night {
+    --orb-light: #fff;
+    --orb-mid: #a9b1c0;
+    --orb-dark: #303746;
+    --glow: #cbd5e1;
+    --surface: radial-gradient(circle at 65% 25%, #566171 0 10%, transparent 14%), radial-gradient(circle at 31% 54%, #4d5868 0 10%, transparent 14%);
+}
+
+.mini-orb.earth {
+    --orb-light: #7dd3fc;
+    --orb-mid: #1166ba;
+    --orb-dark: #061b49;
+    --glow: #38bdf8;
+    --surface: radial-gradient(ellipse at 62% 28%, #76bb54 0 12%, transparent 14%), radial-gradient(ellipse at 32% 57%, #4e9b55 0 16%, transparent 18%);
+}
+
+.mini-orb.winter,
+.mini-orb.snow {
+    --orb-light: #fff;
+    --orb-mid: #9bd6f2;
+    --orb-dark: #234d80;
+    --glow: #bae6fd;
+}
+
+.mini-orb.forest {
+    --orb-light: #bbf7d0;
+    --orb-mid: #15803d;
+    --orb-dark: #052e16;
+    --glow: #4ade80;
+    --surface: radial-gradient(ellipse at 60% 32%, #a3e63577 0 15%, transparent 18%), radial-gradient(ellipse at 32% 55%, #14532d 0 20%, transparent 24%);
+}
+
+.mini-orb.desert {
+    --orb-light: #fef3c7;
+    --orb-mid: #d18b35;
+    --orb-dark: #713f12;
+    --glow: #fbbf24;
+    --surface: repeating-linear-gradient(165deg, transparent 0 4px, #fff0bc70 5px 6px, transparent 7px 10px);
+}
+
+.mini-orb.ocean,
+.mini-orb.beach {
+    --orb-light: #a5f3fc;
+    --orb-mid: #0284c7;
+    --orb-dark: #082f49;
+    --glow: #22d3ee;
+}
+
+.mini-orb.mountain {
+    --orb-light: #e2e8f0;
+    --orb-mid: #64748b;
+    --orb-dark: #1e293b;
+    --glow: #94a3b8;
+}
+
+.mini-orb.city,
+.mini-orb.futuristic {
+    --orb-light: #a5b4fc;
+    --orb-mid: #373b68;
+    --orb-dark: #090c24;
+    --glow: #818cf8;
+}
+
+.mini-orb.village {
+    --orb-light: #fde68a;
+    --orb-mid: #9a7449;
+    --orb-dark: #392516;
+    --glow: #d6a76c;
+}
+
+.mini-orb.retro {
+    --orb-light: #ffd5a5;
+    --orb-mid: #bd5b46;
+    --orb-dark: #44204f;
+    --glow: #fb7185;
+}
+
+.mini-orb.galaxy,
+.mini-orb.space {
+    --orb-light: #f5d0fe;
+    --orb-mid: #7c3aed;
+    --orb-dark: #160e4d;
+    --glow: #c084fc;
+    --surface: repeating-radial-gradient(ellipse at 50% 50%, transparent 0 3px, #e9d5ff40 4px 5px, transparent 6px 8px);
+}
+
+.mini-orb.nebula {
+    --orb-light: #f5d0fe;
+    --orb-mid: #a21caf;
+    --orb-dark: #35083d;
+    --glow: #e879f9;
+}
+
+.mini-orb.storm {
+    --orb-light: #cbd5e1;
+    --orb-mid: #475569;
+    --orb-dark: #111827;
+    --glow: #94a3b8;
+    --surface: repeating-linear-gradient(155deg, transparent 0 4px, #cbd5e144 5px 6px, transparent 7px 10px);
+}
+
+.mini-orb.winter {
+    --orb-light: #ffffff;
+    --orb-mid: #9bd6f2;
+    --orb-dark: #234d80;
+    --glow: #bae6fd;
+}
+
+.mini-orb.moon {
+    --orb-light: #ffffff;
+    --orb-mid: #a9b1c0;
+    --orb-dark: #303746;
+    --glow: #cbd5e1;
+}
+
+.mini-orb.day {
+    --orb-light: #fffde1;
+    --orb-mid: #facc15;
+    --orb-dark: #b45309;
+    --glow: #fde047;
+}
+
+/* Responsive: preserve the horizontal navbar */
+
+@media (max-width: 1050px) {
+    .nav-gallery {
+        grid-template-columns: 1fr;
+        width: min(760px, 96%);
+    }
+}
+
+@media (max-width: 560px) {
+    body {
+        padding-top: 14px;
+    }
+
+    .nav-gallery {
+        width: 96%;
+        gap: 10px;
+    }
+
+    .theme-nav {
+        height: 67px;
+        padding: 6px;
+        gap: 3px;
+    }
+
+    .scene {
+        left: 0;
+        width: 75px;
+        height: 90px;
+    }
+
+    .scene-icon {
+        --orb-size: 70px;
+    }
+
+    .theme-info {
+        flex-basis: 82px;
+        margin-left: 0;
+    }
+
+    .theme-info h2 {
+        font-size: 11px;
+    }
+
+    .theme-info p {
+        font-size: 8px;
+    }
+
+    .nav-links {
+        gap: 0;
+    }
+
+    .nav-links a {
+        padding: 7px 4px;
+        font-size: 9px;
+    }
+
+    .theme-switch {
+        flex-basis: 66px;
+        height: 33px;
+        padding: 2px;
+    }
+
+    .theme-switch button {
+        width: 25px;
+        height: 25px;
+    }
+
+    .mini-orb {
+        width: 19px;
+        height: 19px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="page-header">
+    <h1>Worlds<span>.</span></h1>
+    <p>EXPLORE WORLDS • SWITCH YOUR ENVIRONMENT</p>
+</header>
+
+<main class="nav-gallery" id="navGallery"></main>
+
+<script>
+/* =========================================
+   ORIGINAL 12 THEME PAIRS
+========================================= */
+
+const themePairs = [
+    [
+        {
+            name: "Mars",
+            caption: "The Red Planet",
+            type: "mars",
+            bg: "#260d12",
+            secondary: "#b91c1c",
+            accent: "#fb7185"
+        },
+        {
+            name: "Venus",
+            caption: "Golden Atmosphere",
+            type: "venus",
+            bg: "#351709",
+            secondary: "#d97706",
+            accent: "#fbbf24"
+        }
+    ],
+    [
+        {
+            name: "Sun",
+            caption: "Stellar Fire",
+            type: "sun",
+            bg: "#451405",
+            secondary: "#ea580c",
+            accent: "#fbbf24"
+        },
+        {
+            name: "Moon",
+            caption: "Lunar Landscape",
+            type: "moon",
+            bg: "#0b1220",
+            secondary: "#475569",
+            accent: "#cbd5e1"
+        }
+    ],
+    [
+        {
+            name: "Day",
+            caption: "Bright Open Skies",
+            type: "day",
+            bg: "#12355b",
+            secondary: "#facc15",
+            accent: "#fde047"
+        },
+        {
+            name: "Night",
+            caption: "Stars After Dark",
+            type: "night",
+            bg: "#050817",
+            secondary: "#312e81",
+            accent: "#818cf8"
+        }
+    ],
+    [
+        {
+            name: "Summer",
+            caption: "Golden Season",
+            type: "summer",
+            bg: "#40200b",
+            secondary: "#f59e0b",
+            accent: "#fcd34d"
+        },
+        {
+            name: "Winter",
+            caption: "Frozen Horizons",
+            type: "winter",
+            bg: "#102d4c",
+            secondary: "#60a5fa",
+            accent: "#bae6fd"
+        }
+    ],
+    [
+        {
+            name: "Forest",
+            caption: "Emerald Wilderness",
+            type: "forest",
+            bg: "#052e16",
+            secondary: "#15803d",
+            accent: "#4ade80"
+        },
+        {
+            name: "Desert",
+            caption: "Golden Dunes",
+            type: "desert",
+            bg: "#422006",
+            secondary: "#d97706",
+            accent: "#fbbf24"
+        }
+    ],
+    [
+        {
+            name: "Ocean",
+            caption: "Deep Blue Sea",
+            type: "ocean",
+            bg: "#03293c",
+            secondary: "#0891b2",
+            accent: "#22d3ee"
+        },
+        {
+            name: "Mountain",
+            caption: "Rocky Heights",
+            type: "mountain",
+            bg: "#172033",
+            secondary: "#64748b",
+            accent: "#cbd5e1"
+        }
+    ],
+    [
+        {
+            name: "City",
+            caption: "Neon Skyline",
+            type: "city",
+            bg: "#10152e",
+            secondary: "#4f46e5",
+            accent: "#a5b4fc"
+        },
+        {
+            name: "Village",
+            caption: "Quiet Countryside",
+            type: "village",
+            bg: "#30200f",
+            secondary: "#a16207",
+            accent: "#fcd34d"
+        }
+    ],
+    [
+        {
+            name: "Retro",
+            caption: "Vintage Future",
+            type: "retro",
+            bg: "#32172d",
+            secondary: "#be185d",
+            accent: "#f9a8d4"
+        },
+        {
+            name: "Futuristic",
+            caption: "Beyond Tomorrow",
+            type: "futuristic",
+            bg: "#061b35",
+            secondary: "#0891b2",
+            accent: "#67e8f9"
+        }
+    ],
+    [
+        {
+            name: "Galaxy",
+            caption: "Spiral Universe",
+            type: "galaxy",
+            bg: "#100b36",
+            secondary: "#6d28d9",
+            accent: "#c4b5fd"
+        },
+        {
+            name: "Nebula",
+            caption: "Cosmic Clouds",
+            type: "nebula",
+            bg: "#320b39",
+            secondary: "#c026d3",
+            accent: "#e879f9"
+        }
+    ],
+    [
+        {
+            name: "Storm",
+            caption: "Electric Skies",
+            type: "storm",
+            bg: "#101a2a",
+            secondary: "#475569",
+            accent: "#94a3b8"
+        },
+        {
+            name: "Clear",
+            caption: "Peaceful Skies",
+            type: "clear",
+            bg: "#0b2d4a",
+            secondary: "#0284c7",
+            accent: "#7dd3fc"
+        }
+    ],
+    [
+        {
+            name: "Beach",
+            caption: "Tropical Paradise",
+            type: "beach",
+            bg: "#063b36",
+            secondary: "#0d9488",
+            accent: "#5eead4"
+        },
+        {
+            name: "Snow",
+            caption: "Winter Wonderland",
+            type: "snow",
+            bg: "#132b48",
+            secondary: "#60a5fa",
+            accent: "#e0f2fe"
+        }
+    ],
+    [
+        {
+            name: "Space",
+            caption: "Beyond the Stars",
+            type: "space",
+            bg: "#09051e",
+            secondary: "#6d28d9",
+            accent: "#a78bfa"
+        },
+        {
+            name: "Earth",
+            caption: "Our Living World",
+            type: "earth",
+            bg: "#031b3a",
+            secondary: "#0284c7",
+            accent: "#38bdf8"
+        }
+    ]
+];
+
+/* =========================================
+   CREATE THE REALISTIC SCENE ORB
+========================================= */
+
+function createSceneIcon(theme) {
+    const icon = document.createElement("span");
+    icon.className = `scene-icon ${theme.type}`;
+    icon.setAttribute("aria-hidden", "true");
+    return icon;
+}
+
+function createMiniIcon(theme) {
+    const icon = document.createElement("span");
+    icon.className = `mini-orb ${theme.type}`;
+    icon.setAttribute("aria-hidden", "true");
+    return icon;
+}
+
+/* =========================================
+   BUILD ONE COMPLETE NAVBAR
+========================================= */
+
+function createNavbar(pair, initialThemeIndex) {
+    let currentIndex = initialThemeIndex;
+
+    const nav = document.createElement("section");
+    nav.className = "theme-nav";
+
+    const backgroundA = document.createElement("div");
+    backgroundA.className = "environment-layer first";
+
+    const backgroundB = document.createElement("div");
+    backgroundB.className = "environment-layer second";
+
+    const atmosphere = document.createElement("div");
+    atmosphere.className = "environment-atmosphere";
+
+    const horizon = document.createElement("div");
+    horizon.className = "environment-horizon";
+
+    const scene = document.createElement("div");
+    scene.className = "scene";
+
+    const info = document.createElement("div");
+    info.className = "theme-info";
+
+    const title = document.createElement("h2");
+    const caption = document.createElement("p");
+
+    info.append(title, caption);
+
+    const links = document.createElement("nav");
+    links.className = "nav-links";
+    links.setAttribute("aria-label", "Main navigation");
+
+    ["Home", "Login", "Signup", "Contact"].forEach((label, index) => {
+        const link = document.createElement("a");
+        link.href = "#";
+        link.textContent = label;
+
+        if (index === 0) {
+            link.classList.add("active");
+        }
+
+        link.addEventListener("click", event => {
+            event.preventDefault();
+
+            links.querySelectorAll("a").forEach(item => {
+                item.classList.remove("active");
+            });
+
+            link.classList.add("active");
+        });
+
+        links.appendChild(link);
+    });
+
+    const toggle = document.createElement("div");
+    toggle.className = "theme-switch";
+
+    const toggleButtons = [];
+
+    pair.forEach((theme, index) => {
+        const button = document.createElement("button");
+
+        button.type = "button";
+        button.title = `Switch to ${theme.name}`;
+        button.setAttribute("aria-label", `Switch to ${theme.name}`);
+
+        button.appendChild(createMiniIcon(theme));
+
+        button.addEventListener("click", () => {
+            switchTheme(index);
+        });
+
+        toggle.appendChild(button);
+        toggleButtons.push(button);
+    });
+
+    nav.append(
+        backgroundA,
+        backgroundB,
+        atmosphere,
+        horizon,
+        scene,
+        info,
+        links,
+        toggle
+    );
+
+    function backgroundFor(theme) {
+        return `
+            radial-gradient(
+                ellipse at 50% 130%,
+                ${theme.secondary}b0,
+                transparent 65%
+            ),
+            radial-gradient(
+                ellipse at 78% 15%,
+                ${theme.accent}35,
+                transparent 48%
+            ),
+            linear-gradient(
+                105deg,
+                ${theme.bg},
+                #020617
+            )
+        `;
+    }
+
+    function applyTheme(theme) {
+        nav.style.setProperty("--bg", theme.bg);
+        nav.style.setProperty("--secondary", theme.secondary);
+        nav.style.setProperty("--accent", theme.accent);
+        nav.style.setProperty("--glow", theme.accent);
+
+        nav.style.borderColor = theme.accent;
+
+        title.textContent = theme.name;
+        caption.textContent = theme.caption;
+
+        atmosphere.style.background = `
+            linear-gradient(
+                0deg,
+                ${theme.secondary}77,
+                transparent 60%
+            ),
+            linear-gradient(
+                90deg,
+                ${theme.bg},
+                transparent 50%,
+                ${theme.bg}
+            )
+        `;
+
+        toggleButtons.forEach((button, index) => {
+            const selected = index === currentIndex;
+
+            button.classList.toggle("selected", selected);
+            button.setAttribute("aria-pressed", String(selected));
+        });
+    }
+
+    function switchTheme(nextIndex) {
+        if (nextIndex === currentIndex) return;
+
+        const nextTheme = pair[nextIndex];
+        const oldIcon = scene.querySelector(".scene-icon");
+
+        if (oldIcon) {
+            oldIcon.classList.remove("rising");
+            oldIcon.classList.add("leaving");
+        }
+
+        currentIndex = nextIndex;
+
+        applyTheme(nextTheme);
+
+        /*
+          The new background fades in over 4.5 seconds.
+          The left-side orb sinks away, then the new orb rises.
+        */
+
+        backgroundB.style.background = backgroundFor(nextTheme);
+        nav.classList.add("changing");
+
+        const newIcon = createSceneIcon(nextTheme);
+        newIcon.classList.add("rising");
+        scene.appendChild(newIcon);
+
+        window.setTimeout(() => {
+            backgroundA.style.background = backgroundFor(nextTheme);
+            nav.classList.remove("changing");
+        }, 4500);
+
+        window.setTimeout(() => {
+            if (oldIcon && oldIcon.parentNode) {
+                oldIcon.remove();
+            }
+
+            newIcon.classList.remove("rising");
+        }, 1900);
+    }
+
+    const initialTheme = pair[currentIndex];
+
+    backgroundA.style.background = backgroundFor(initialTheme);
+    backgroundB.style.background = backgroundFor(initialTheme);
+
+    scene.appendChild(createSceneIcon(initialTheme));
+    applyTheme(initialTheme);
+
+    return nav;
+}
+
+/* =========================================
+   ORIGINAL 24 NAVBAR GALLERY
+   Each navbar works independently.
+========================================= */
+
+const gallery = document.getElementById("navGallery");
+
+themePairs.forEach(pair => {
+    gallery.appendChild(createNavbar(pair, 0));
+    gallery.appendChild(createNavbar(pair, 1));
+});
+</script>
+
+</body>
+</html>
