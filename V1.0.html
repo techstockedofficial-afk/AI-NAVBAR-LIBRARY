@@ -1,0 +1,1061 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Worlds — Interactive Theme Switches</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+:root {
+  --page-bg: #fff7f3;
+  --text: #351c27;
+  --muted: #775b64;
+  --surface: rgba(255,255,255,.65);
+  --border: rgba(50,30,50,.12);
+  --accent: #e34b55;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background: var(--page-bg);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+  transition: background .65s ease, color .45s ease;
+}
+
+button {
+  font: inherit;
+}
+
+.page-glow {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.glow {
+  position: absolute;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: .16;
+  background: var(--accent);
+  transition: background .6s ease;
+}
+
+.glow.one {
+  top: -180px;
+  left: -100px;
+}
+
+.glow.two {
+  right: -150px;
+  bottom: -190px;
+}
+
+.topbar {
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  backdrop-filter: blur(16px);
+  transition: background .4s ease;
+}
+
+.logo-dot {
+  width: 12px;
+  height: 12px;
+  display: inline-block;
+  border-radius: 4px;
+  background: var(--accent);
+  transform: rotate(45deg);
+  transition: background .4s ease;
+}
+
+.eyebrow {
+  color: var(--accent);
+  transition: color .4s ease;
+}
+
+.theme-card {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  transition:
+    border-color .35s ease,
+    background .35s ease,
+    transform .25s ease,
+    box-shadow .35s ease;
+}
+
+.theme-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 40px rgba(0,0,0,.07);
+}
+
+.theme-card.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.theme-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 16px 17px 11px;
+}
+
+.theme-number {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.theme-name {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -.4px;
+}
+
+.theme-description {
+  color: var(--muted);
+  font-size: 11px;
+  transition: color .4s ease;
+}
+
+/* THE TOGGLE ITSELF */
+
+.theme-toggle {
+  width: calc(100% - 24px);
+  height: 104px;
+  position: relative;
+  margin: 0 12px 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 0;
+  border: 0;
+  border-radius: 100px;
+  overflow: hidden;
+  cursor: pointer;
+  isolation: isolate;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.theme-half {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-width: 0;
+  overflow: hidden;
+  transition: filter .3s ease;
+}
+
+.theme-half.left {
+  border-radius: 100px 0 0 100px;
+}
+
+.theme-half.right {
+  border-radius: 0 100px 100px 0;
+}
+
+.theme-symbol {
+  position: relative;
+  z-index: 1;
+  font-size: 29px;
+  line-height: 1.1;
+  transition: transform .35s ease;
+}
+
+.theme-label {
+  position: relative;
+  z-index: 1;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.theme-toggle:hover .theme-symbol {
+  transform: translateY(-2px);
+}
+
+/* Circular knob slides to the active theme */
+
+.toggle-knob {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 5px solid rgba(255,255,255,.94);
+  background: var(--knob-bg, #fff);
+  box-shadow:
+    0 4px 14px rgba(0,0,0,.2),
+    inset 0 0 0 1px rgba(0,0,0,.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  transition:
+    left .38s cubic-bezier(.2,.8,.2,1),
+    background .3s ease;
+}
+
+.toggle-knob span {
+  font-size: 26px;
+  line-height: 1;
+}
+
+.theme-toggle[data-side="left"] .toggle-knob {
+  left: 25%;
+}
+
+.theme-toggle[data-side="right"] .toggle-knob {
+  left: 75%;
+}
+
+/* Simple, flat decorative terrain */
+
+.landscape {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 28px;
+  opacity: .65;
+}
+
+.landscape::before,
+.landscape::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 75%;
+  height: 24px;
+  border-radius: 50% 50% 0 0;
+}
+
+.landscape::before {
+  left: -10%;
+  background: var(--hill-one);
+}
+
+.landscape::after {
+  right: -25%;
+  height: 17px;
+  background: var(--hill-two);
+}
+
+.theme-toggle[data-side="left"] .theme-half.left,
+.theme-toggle[data-side="right"] .theme-half.right {
+  filter: brightness(1.04);
+}
+
+.theme-toggle[data-side="left"] .theme-half.right,
+.theme-toggle[data-side="right"] .theme-half.left {
+  filter: brightness(.97);
+}
+
+/* Footer and preview */
+
+.preview-panel {
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  transition: background .4s ease, border-color .4s ease;
+}
+
+.preview-swatch {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: var(--accent);
+  transition: background .4s ease;
+}
+
+.small-button {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 9px 13px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .3s ease, transform .2s ease;
+}
+
+.small-button:hover {
+  transform: translateY(-1px);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: inline-block;
+}
+
+@media(max-width:640px) {
+  .theme-toggle {
+    height: 90px;
+  }
+
+  .toggle-knob {
+    width: 54px;
+    height: 54px;
+  }
+
+  .theme-symbol {
+    font-size: 25px;
+  }
+
+  .theme-label {
+    font-size: 9px;
+    letter-spacing: .5px;
+  }
+
+  .theme-heading {
+    padding: 13px 12px 10px;
+  }
+
+  .theme-name {
+    font-size: 13px;
+  }
+}
+
+@media(prefers-reduced-motion:reduce) {
+  *, *::before, *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="page-glow">
+  <div class="glow one"></div>
+  <div class="glow two"></div>
+</div>
+
+<!-- NAVIGATION -->
+
+<header class="topbar">
+  <div class="max-w-7xl mx-auto px-5 md:px-8 py-4 flex
+              items-center justify-between gap-4">
+
+    <a href="#" class="flex items-center gap-3 no-underline"
+       style="color:var(--text)">
+      <span class="logo-dot"></span>
+      <span class="font-black tracking-tight text-lg">worlds<span
+        style="color:var(--accent)">.</span></span>
+    </a>
+
+    <div class="flex items-center gap-2">
+      <span class="status-dot"></span>
+      <span class="text-xs font-semibold" style="color:var(--muted)">
+        Interactive environments
+      </span>
+    </div>
+
+  </div>
+</header>
+
+<!-- HERO -->
+
+<main class="max-w-7xl mx-auto px-5 md:px-8 py-10 md:py-14">
+
+  <section class="mb-9 md:mb-12">
+    <p class="eyebrow text-xs font-black tracking-[.22em] uppercase mb-4">
+      A world of your own
+    </p>
+
+    <div class="flex flex-col lg:flex-row lg:items-end
+                lg:justify-between gap-5">
+
+      <div>
+        <h1 class="text-4xl sm:text-5xl md:text-6xl
+                   font-black tracking-[-.055em] leading-tight">
+          Change your
+          <br>
+          <span style="color:var(--accent)">environment.</span>
+        </h1>
+
+        <p class="mt-4 text-sm md:text-base max-w-xl leading-7"
+           style="color:var(--muted)">
+          Twelve little switches. Twenty-four different worlds.
+          Pick a side and watch the entire page transform to match it.
+        </p>
+      </div>
+
+      <button class="small-button self-start lg:self-auto"
+              onclick="randomizeTheme()">
+        ✳ Surprise me
+      </button>
+
+    </div>
+  </section>
+
+  <!-- THEME STATUS -->
+
+  <section class="preview-panel p-4 md:p-5 mb-8">
+    <div class="flex items-center gap-4">
+
+      <div class="preview-swatch" id="previewSwatch"></div>
+
+      <div class="min-w-0 flex-1">
+        <p class="text-[10px] uppercase font-black tracking-[.18em]"
+           style="color:var(--muted)">
+          Current environment
+        </p>
+
+        <h2 id="activeTheme"
+            class="text-lg font-black mt-1 truncate">
+          Mars
+        </h2>
+
+        <p id="activeDescription"
+           class="text-xs mt-1"
+           style="color:var(--muted)">
+          A warm red world with deep horizons.
+        </p>
+      </div>
+
+      <button class="small-button" onclick="resetThemes()">
+        Reset
+      </button>
+
+    </div>
+  </section>
+
+  <!-- ALL 12 SWITCHES -->
+
+  <section>
+    <div class="flex items-end justify-between gap-3 mb-5">
+      <div>
+        <h2 class="text-xl font-black tracking-tight">
+          Explore the collection
+        </h2>
+        <p class="text-xs mt-1" style="color:var(--muted)">
+          Tap either half of any switch.
+        </p>
+      </div>
+
+      <span class="text-xs font-bold whitespace-nowrap"
+            style="color:var(--muted)">
+        12 switches
+      </span>
+    </div>
+
+    <div id="themeGrid"
+         class="grid grid-cols-1 sm:grid-cols-2
+                lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+
+  <footer class="mt-12 pt-5 border-t flex flex-wrap
+                 items-center justify-between gap-3"
+          style="border-color:var(--border)">
+    <p class="text-xs" style="color:var(--muted)">
+      Designed for curious minds.
+    </p>
+    <p class="text-xs font-semibold" style="color:var(--muted)">
+      Find your atmosphere.
+    </p>
+  </footer>
+
+</main>
+
+<script>
+/*
+  Each theme has its own colors, symbols, description,
+  and full-page background.
+*/
+
+const themes = [
+  {
+    id: "planet",
+    left: {
+      name: "Mars",
+      icon: "♂",
+      bg: "#b5122b",
+      fg: "#fff1e9",
+      hill1: "#7d091c",
+      hill2: "#e32e42",
+      page: "#fff0ed",
+      text: "#46151e",
+      muted: "#96626a",
+      accent: "#d72b43",
+      description: "A warm red world with deep horizons."
+    },
+    right: {
+      name: "Venus",
+      icon: "◒",
+      bg: "#ffe2df",
+      fg: "#9a3b37",
+      hill1: "#f2b4a6",
+      hill2: "#ffd1bd",
+      page: "#fff5f0",
+      text: "#572d2a",
+      muted: "#98716c",
+      accent: "#d87969",
+      description: "Soft peach tones and glowing skies."
+    }
+  },
+  {
+    id: "sky",
+    left: {
+      name: "Sun",
+      icon: "☀",
+      bg: "#ffb817",
+      fg: "#704000",
+      hill1: "#e89000",
+      hill2: "#ffd66b",
+      page: "#fff7dd",
+      text: "#54360b",
+      muted: "#967743",
+      accent: "#e89b00",
+      description: "Golden daylight and warm sunlight."
+    },
+    right: {
+      name: "Moon",
+      icon: "☾",
+      bg: "#102b5e",
+      fg: "#edf4ff",
+      hill1: "#0a1b40",
+      hill2: "#24447e",
+      page: "#edf3ff",
+      text: "#182a4c",
+      muted: "#647798",
+      accent: "#4168bc",
+      description: "Quiet midnight beneath a silver moon."
+    }
+  },
+  {
+    id: "daynight",
+    left: {
+      name: "Day",
+      icon: "☼",
+      bg: "#ffe8a0",
+      fg: "#8c4619",
+      hill1: "#f5cb6a",
+      hill2: "#fff1c8",
+      page: "#fff9e8",
+      text: "#543919",
+      muted: "#968064",
+      accent: "#e8a72a",
+      description: "A light, open, sunlit atmosphere."
+    },
+    right: {
+      name: "Night",
+      icon: "☾",
+      bg: "#102450",
+      fg: "#e5edff",
+      hill1: "#0a1735",
+      hill2: "#213e73",
+      page: "#101a32",
+      text: "#eef3ff",
+      muted: "#a1b1ce",
+      accent: "#8b9eea",
+      description: "A deep blue night with quiet stars."
+    }
+  },
+  {
+    id: "season",
+    left: {
+      name: "Summer",
+      icon: "☀",
+      bg: "#ff5b16",
+      fg: "#fff2cf",
+      hill1: "#d93e16",
+      hill2: "#ff9c38",
+      page: "#fff1e5",
+      text: "#612b15",
+      muted: "#a36c50",
+      accent: "#ee5a24",
+      description: "Bright heat, orange skies, and long days."
+    },
+    right: {
+      name: "Winter",
+      icon: "❄",
+      bg: "#a9e9ff",
+      fg: "#174d91",
+      hill1: "#79c8ef",
+      hill2: "#d9f6ff",
+      page: "#eefaff",
+      text: "#163c60",
+      muted: "#638ba8",
+      accent: "#269bd5",
+      description: "Crisp blue air and frozen landscapes."
+    }
+  },
+  {
+    id: "land",
+    left: {
+      name: "Forest",
+      icon: "♠",
+      bg: "#08794b",
+      fg: "#e0ffe8",
+      hill1: "#075637",
+      hill2: "#169c68",
+      page: "#e9f8ed",
+      text: "#174630",
+      muted: "#5e8c70",
+      accent: "#16975c",
+      description: "Deep green forests and natural calm."
+    },
+    right: {
+      name: "Desert",
+      icon: "♨",
+      bg: "#ffdfad",
+      fg: "#87401d",
+      hill1: "#eab77a",
+      hill2: "#f6d19c",
+      page: "#fff4e1",
+      text: "#634025",
+      muted: "#a08364",
+      accent: "#c98243",
+      description: "Sand dunes, copper tones, and dry air."
+    }
+  },
+  {
+    id: "nature",
+    left: {
+      name: "Ocean",
+      icon: "≋",
+      bg: "#0797df",
+      fg: "#e4faff",
+      hill1: "#0874b7",
+      hill2: "#28b7e8",
+      page: "#e8f8ff",
+      text: "#103d5d",
+      muted: "#58839d",
+      accent: "#078fce",
+      description: "Open water and cool ocean blues."
+    },
+    right: {
+      name: "Mountain",
+      icon: "▲",
+      bg: "#dcecf7",
+      fg: "#20456b",
+      hill1: "#a7c6df",
+      hill2: "#f3fbff",
+      page: "#f0f6fb",
+      text: "#233c52",
+      muted: "#71869a",
+      accent: "#547fa6",
+      description: "Snow peaks and clear mountain air."
+    }
+  },
+  {
+    id: "settlement",
+    left: {
+      name: "City",
+      icon: "▥",
+      bg: "#6333e8",
+      fg: "#f4edff",
+      hill1: "#4821ba",
+      hill2: "#8966ff",
+      page: "#f1edff",
+      text: "#34205f",
+      muted: "#7d6da3",
+      accent: "#7850e8",
+      description: "Electric violet and metropolitan energy."
+    },
+    right: {
+      name: "Village",
+      icon: "⌂",
+      bg: "#ffe0b1",
+      fg: "#83401a",
+      hill1: "#eec17c",
+      hill2: "#ffedcc",
+      page: "#fff5e7",
+      text: "#5c3820",
+      muted: "#9a7a5b",
+      accent: "#ce8844",
+      description: "Warm earth tones and a peaceful retreat."
+    }
+  },
+  {
+    id: "time",
+    left: {
+      name: "Retro",
+      icon: "◉",
+      bg: "#f32968",
+      fg: "#fff0f5",
+      hill1: "#c51c60",
+      hill2: "#ff7399",
+      page: "#fff0f5",
+      text: "#5b1937",
+      muted: "#a36b83",
+      accent: "#e83d7b",
+      description: "Playful pinks with nostalgic energy."
+    },
+    right: {
+      name: "Futuristic",
+      icon: "▥",
+      bg: "#28106f",
+      fg: "#e9d9ff",
+      hill1: "#17094c",
+      hill2: "#5127b3",
+      page: "#f2edff",
+      text: "#30205c",
+      muted: "#796ba5",
+      accent: "#7950e7",
+      description: "Neon violet and a digital skyline."
+    }
+  },
+  {
+    id: "space",
+    left: {
+      name: "Galaxy",
+      icon: "✧",
+      bg: "#29105e",
+      fg: "#f0ddff",
+      hill1: "#16063b",
+      hill2: "#5727a4",
+      page: "#f2eaff",
+      text: "#321d57",
+      muted: "#81709f",
+      accent: "#8a50dd",
+      description: "Cosmic purple, distant stars, and mystery."
+    },
+    right: {
+      name: "Nebula",
+      icon: "✦",
+      bg: "#ffb9d7",
+      fg: "#8c285e",
+      hill1: "#e98dbd",
+      hill2: "#ffe1ef",
+      page: "#fff0f7",
+      text: "#572440",
+      muted: "#a17491",
+      accent: "#df65a4",
+      description: "Soft pink clouds and glowing cosmic dust."
+    }
+  },
+  {
+    id: "weather",
+    left: {
+      name: "Storm",
+      icon: "ϟ",
+      bg: "#344454",
+      fg: "#eff6ff",
+      hill1: "#202d3c",
+      hill2: "#596f82",
+      page: "#e9eef3",
+      text: "#253442",
+      muted: "#71808e",
+      accent: "#536e8a",
+      description: "Dark clouds and dramatic slate tones."
+    },
+    right: {
+      name: "Clear",
+      icon: "☀",
+      bg: "#6bd6ff",
+      fg: "#124c91",
+      hill1: "#38a9e0",
+      hill2: "#b8edff",
+      page: "#eaf9ff",
+      text: "#174365",
+      muted: "#6188a1",
+      accent: "#20a8df",
+      description: "Fresh skies and clean blue light."
+    }
+  },
+  {
+    id: "holiday",
+    left: {
+      name: "Beach",
+      icon: "♨",
+      bg: "#ffdfa0",
+      fg: "#99501d",
+      hill1: "#f3c66d",
+      hill2: "#fff0c6",
+      page: "#fff7e6",
+      text: "#684323",
+      muted: "#a08562",
+      accent: "#e6a54d",
+      description: "Golden sand and tropical sunshine."
+    },
+    right: {
+      name: "Snow",
+      icon: "❄",
+      bg: "#c7eaff",
+      fg: "#174f8c",
+      hill1: "#a5d4f2",
+      hill2: "#f5fcff",
+      page: "#f1f9ff",
+      text: "#214666",
+      muted: "#728da4",
+      accent: "#63a7dc",
+      description: "White peaks and a cool winter escape."
+    }
+  },
+  {
+    id: "world",
+    left: {
+      name: "Space",
+      icon: "🪐",
+      bg: "#0b1b40",
+      fg: "#e3eaff",
+      hill1: "#07112c",
+      hill2: "#203a74",
+      page: "#0c1530",
+      text: "#edf1ff",
+      muted: "#a0afd1",
+      accent: "#8d8dff",
+      description: "A dark universe with distant planets."
+    },
+    right: {
+      name: "Earth",
+      icon: "🌍",
+      bg: "#9eefd0",
+      fg: "#12584b",
+      hill1: "#54c59b",
+      hill2: "#d2ffdf",
+      page: "#e9fff3",
+      text: "#184b3b",
+      muted: "#5e927f",
+      accent: "#20ad81",
+      description: "Living greens and a fresh natural world."
+    }
+  }
+];
+
+/* Independent state for every switch */
+const switchState = Object.fromEntries(
+  themes.map(theme => [theme.id, "left"])
+);
+
+let activeTheme = themes[0].left;
+
+/* Create the visual switches */
+function renderSwitches() {
+  const grid = document.getElementById("themeGrid");
+
+  grid.innerHTML = themes.map((pair, index) => `
+    <article class="theme-card"
+             id="card-${pair.id}">
+
+      <div class="theme-heading">
+        <div>
+          <p class="theme-number">
+            THEME ${String(index + 1).padStart(2, "0")}
+          </p>
+
+          <h3 class="theme-name mt-1">
+            ${pair.left.name}
+            <span style="color:var(--muted);font-weight:400">/</span>
+            ${pair.right.name}
+          </h3>
+        </div>
+
+        <span class="text-lg" style="color:var(--muted)">↔</span>
+      </div>
+
+      <button
+        class="theme-toggle"
+        id="toggle-${pair.id}"
+        data-side="left"
+        type="button"
+        aria-label="${pair.left.name} and ${pair.right.name} theme toggle"
+        aria-pressed="false"
+        onclick="toggleTheme('${pair.id}')">
+
+        <span class="theme-half left"
+          style="
+            background:${pair.left.bg};
+            color:${pair.left.fg};
+            --hill-one:${pair.left.hill1};
+            --hill-two:${pair.left.hill2};
+          ">
+
+          <span class="theme-symbol">${pair.left.icon}</span>
+          <span class="theme-label">${pair.left.name.toUpperCase()}</span>
+          <span class="landscape"></span>
+        </span>
+
+        <span class="theme-half right"
+          style="
+            background:${pair.right.bg};
+            color:${pair.right.fg};
+            --hill-one:${pair.right.hill1};
+            --hill-two:${pair.right.hill2};
+          ">
+
+          <span class="theme-symbol">${pair.right.icon}</span>
+          <span class="theme-label">${pair.right.name.toUpperCase()}</span>
+          <span class="landscape"></span>
+        </span>
+
+        <span class="toggle-knob">
+          <span>${pair.left.icon}</span>
+        </span>
+
+      </button>
+
+      <p class="theme-description px-4 pb-4"
+         id="description-${pair.id}">
+        ${pair.left.description}
+      </p>
+
+    </article>
+  `).join("");
+}
+
+/* Change the entire website's color environment */
+function applyTheme(theme) {
+  activeTheme = theme;
+
+  const root = document.documentElement;
+
+  root.style.setProperty("--page-bg", theme.page);
+  root.style.setProperty("--text", theme.text);
+  root.style.setProperty("--muted", theme.muted);
+  root.style.setProperty("--accent", theme.accent);
+
+  root.style.setProperty(
+    "--surface",
+    theme.page === "#101a32" ||
+    theme.page === "#0c1530"
+      ? "rgba(24,35,65,.78)"
+      : "rgba(255,255,255,.62)"
+  );
+
+  root.style.setProperty(
+    "--border",
+    theme.page === "#101a32" ||
+    theme.page === "#0c1530"
+      ? "rgba(255,255,255,.13)"
+      : "rgba(50,30,50,.12)"
+  );
+
+  document.getElementById("activeTheme").textContent =
+    theme.name;
+
+  document.getElementById("activeDescription").textContent =
+    theme.description;
+
+  document.getElementById("previewSwatch").style.background =
+    theme.accent;
+
+  document.title = theme.name + " Mode — Worlds";
+}
+
+/* Toggle between the two sides of a switch */
+function toggleTheme(id) {
+  const pair = themes.find(theme => theme.id === id);
+  const newSide = switchState[id] === "left" ? "right" : "left";
+
+  switchState[id] = newSide;
+
+  const selectedTheme = pair[newSide];
+
+  const button = document.getElementById("toggle-" + id);
+  const knob = button.querySelector(".toggle-knob");
+  const knobIcon = knob.querySelector("span");
+  const card = document.getElementById("card-" + id);
+  const description = document.getElementById("description-" + id);
+
+  button.dataset.side = newSide;
+  button.setAttribute("aria-pressed", String(newSide === "right"));
+
+  knobIcon.textContent = selectedTheme.icon;
+  knob.style.setProperty("--knob-bg", selectedTheme.page);
+
+  description.textContent = selectedTheme.description;
+
+  /*
+    Highlight the switch that most recently changed
+    the global environment.
+  */
+  document.querySelectorAll(".theme-card").forEach(item => {
+    item.classList.remove("selected");
+  });
+
+  card.classList.add("selected");
+
+  applyTheme(selectedTheme);
+}
+
+/* Surprise me: choose a random theme and side */
+function randomizeTheme() {
+  const pair = themes[Math.floor(Math.random() * themes.length)];
+
+  const side = Math.random() < .5 ? "left" : "right";
+
+  /*
+    Set the opposite side first, then trigger the
+    normal toggle function to select the random side.
+  */
+  switchState[pair.id] = side === "right" ? "left" : "right";
+  toggleTheme(pair.id);
+}
+
+/* Reset every switch and restore the default theme */
+function resetThemes() {
+  themes.forEach(pair => {
+    switchState[pair.id] = "left";
+
+    const button = document.getElementById("toggle-" + pair.id);
+    const knob = button.querySelector(".toggle-knob");
+    const description = document.getElementById(
+      "description-" + pair.id
+    );
+
+    button.dataset.side = "left";
+    button.setAttribute("aria-pressed", "false");
+
+    knob.querySelector("span").textContent = pair.left.icon;
+    knob.style.setProperty("--knob-bg", pair.left.page);
+
+    description.textContent = pair.left.description;
+  });
+
+  document.querySelectorAll(".theme-card").forEach(card => {
+    card.classList.remove("selected");
+  });
+
+  document.getElementById("card-planet").classList.add("selected");
+
+  applyTheme(themes[0].left);
+}
+
+/* Start the website */
+renderSwitches();
+resetThemes();
+</script>
+
+</body>
+</html>
