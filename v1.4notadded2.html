@@ -1,0 +1,1383 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cosmic Navbar Themes</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --transition: 4.5s;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    background:
+        radial-gradient(ellipse at top, #172554 0%, transparent 55%),
+        #030712;
+}
+
+.header {
+    text-align: center;
+    padding: 5px 16px 22px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: clamp(2.3rem, 5vw, 3.3rem);
+    font-weight: 800;
+    letter-spacing: -2px;
+    color: #f8fafc;
+    text-shadow: 0 0 30px #818cf8;
+}
+
+.header p {
+    margin: 0;
+    color: #a5b4fc;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+}
+
+.gallery {
+    width: min(1500px, 97%);
+    margin: 0 auto 35px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 18px;
+}
+
+/* ========================================
+   ORIGINAL HORIZONTAL NAVBAR LAYOUT
+======================================== */
+
+.theme-nav {
+    --bg: #061329;
+    --accent: #60a5fa;
+    --secondary: #0c4a6e;
+    --planet-light: #d1d5db;
+    --planet-mid: #737b8c;
+    --planet-dark: #202738;
+    --planet-glow: #93c5fd;
+
+    height: 67px;
+    min-width: 0;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px 7px 16px;
+
+    border: 1px solid var(--accent);
+    border-radius: 15px;
+
+    background: var(--bg);
+    box-shadow:
+        0 0 12px color-mix(in srgb, var(--accent) 20%, transparent),
+        inset 0 0 20px #0005;
+
+    transition:
+        border-color var(--transition) ease,
+        box-shadow var(--transition) ease;
+}
+
+/* Background environment layers */
+
+.environment {
+    position: absolute;
+    z-index: -5;
+    inset: 0;
+    background:
+        radial-gradient(
+            ellipse at 50% 130%,
+            var(--secondary),
+            transparent 68%
+        ),
+        linear-gradient(100deg, var(--bg), #020617);
+    transition: opacity var(--transition) ease;
+}
+
+.environment::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: .75;
+
+    background:
+        radial-gradient(circle at 78% 18%, #fff 0 1px, transparent 2px),
+        radial-gradient(circle at 68% 43%, #fff9 0 1px, transparent 2px),
+        radial-gradient(circle at 91% 30%, #fff 0 1px, transparent 2px),
+        radial-gradient(circle at 54% 14%, #fff9 0 1px, transparent 2px),
+        radial-gradient(circle at 42% 35%, #fff9 0 1px, transparent 2px),
+        radial-gradient(circle at 83% 65%, #fff9 0 1px, transparent 2px);
+}
+
+.environment::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 17px;
+
+    background:
+        linear-gradient(180deg, transparent, #020617c9),
+        linear-gradient(
+            175deg,
+            transparent 0 38%,
+            var(--secondary) 40% 46%,
+            transparent 48%
+        );
+    opacity: .8;
+}
+
+.environment.second {
+    opacity: 0;
+}
+
+.theme-nav.changing .environment.second {
+    opacity: 1;
+}
+
+.theme-nav.changing .environment.first {
+    opacity: 0;
+}
+
+/* Horizon and environmental glow */
+
+.atmosphere {
+    position: absolute;
+    z-index: -4;
+    inset: 0;
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            0deg,
+            var(--secondary) 0%,
+            transparent 58%
+        ),
+        linear-gradient(
+            90deg,
+            var(--bg) 0%,
+            transparent 48%,
+            var(--bg) 100%
+        );
+
+    transition: background var(--transition) ease;
+}
+
+.sunset {
+    position: absolute;
+    z-index: -3;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+
+    background:
+        radial-gradient(
+            ellipse at 50% 110%,
+            #fb923c99,
+            transparent 65%
+        ),
+        linear-gradient(0deg, #f9731633, transparent 75%);
+
+    transition: opacity 1.2s ease;
+}
+
+.theme-nav.changing .sunset {
+    opacity: 1;
+}
+
+/* ========================================
+   LARGE REALISTIC SIDE PLANET
+======================================== */
+
+.planet-stage {
+    position: absolute;
+    z-index: -1;
+    left: 83px;
+    top: 50%;
+    width: 116px;
+    height: 116px;
+    transform: translateY(-50%);
+    pointer-events: none;
+
+    display: grid;
+    place-items: center;
+}
+
+.planet {
+    position: relative;
+    width: var(--planet-size, 100px);
+    height: var(--planet-size, 100px);
+    max-width: 116px;
+    max-height: 116px;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    background:
+        radial-gradient(
+            circle at 29% 22%,
+            #fff 0%,
+            #ffffffb8 2%,
+            #ffffff40 8%,
+            transparent 21%
+        ),
+        radial-gradient(
+            circle at 31% 29%,
+            var(--planet-light) 0%,
+            var(--planet-mid) 42%,
+            var(--planet-dark) 78%,
+            #02040a 100%
+        );
+
+    box-shadow:
+        inset -13px -7px 20px #000c,
+        inset 4px 3px 9px #ffffff50,
+        0 0 12px var(--planet-glow),
+        0 0 27px color-mix(in srgb, var(--planet-glow) 55%, transparent);
+}
+
+/* Surface markings */
+
+.planet::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            ellipse at 66% 24%,
+            #0005 0 5%,
+            transparent 16%
+        ),
+        radial-gradient(
+            ellipse at 40% 58%,
+            #fff2 0 4%,
+            transparent 17%
+        ),
+        radial-gradient(
+            ellipse at 76% 67%,
+            #0006 0 7%,
+            transparent 19%
+        ),
+        radial-gradient(
+            ellipse at 24% 72%,
+            #fff2 0 5%,
+            transparent 15%
+        ),
+        repeating-linear-gradient(
+            155deg,
+            transparent 0 9px,
+            #ffffff0a 10px 11px,
+            transparent 12px 20px
+        );
+
+    mix-blend-mode: soft-light;
+}
+
+/* Atmospheric rim */
+
+.planet::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--planet-glow) 65%, transparent);
+    box-shadow: inset 0 0 7px var(--planet-glow);
+    opacity: .75;
+}
+
+/* Realistic Earth continents */
+
+.planet.earth::before {
+    background:
+        radial-gradient(ellipse at 62% 30%, #72bb55 0 9%, transparent 10%),
+        radial-gradient(ellipse at 48% 43%, #a2cf70 0 8%, transparent 9%),
+        radial-gradient(ellipse at 31% 58%, #4f9b4e 0 12%, transparent 13%),
+        radial-gradient(ellipse at 68% 66%, #7ebd58 0 8%, transparent 9%),
+        radial-gradient(ellipse at 40% 24%, #fff7 0 4%, transparent 18%),
+        radial-gradient(ellipse at 60% 80%, #fff5 0 3%, transparent 16%);
+    mix-blend-mode: normal;
+}
+
+/* Jupiter's bands */
+
+.planet.jupiter::before {
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent 0 7px,
+            #f7e2c7a0 8px 11px,
+            #80563b99 12px 15px,
+            #f8d7a766 16px 20px,
+            transparent 21px 25px
+        ),
+        radial-gradient(ellipse at 65% 68%, #b84c31 0 8%, transparent 10%);
+    mix-blend-mode: normal;
+    opacity: .8;
+}
+
+/* Mars-like surface */
+
+.planet.mars::before {
+    background:
+        radial-gradient(ellipse at 63% 31%, #551b17 0 8%, transparent 10%),
+        radial-gradient(ellipse at 31% 60%, #f3a08766 0 7%, transparent 15%),
+        radial-gradient(ellipse at 75% 72%, #451b18 0 5%, transparent 15%),
+        radial-gradient(ellipse at 50% 48%, #ffb59b33, transparent 35%);
+}
+
+/* Saturn rings */
+
+.planet.has-rings {
+    overflow: visible;
+    z-index: 1;
+}
+
+.planet .rings {
+    position: absolute;
+    z-index: -1;
+    width: 155%;
+    height: 44%;
+    left: -27%;
+    top: 28%;
+    border-radius: 50%;
+    transform: rotate(-22deg);
+    border: 7px solid #d8c39a;
+    box-shadow:
+        0 0 3px #fff8,
+        inset 0 0 5px #4a3218;
+    background: transparent;
+}
+
+.planet .rings::before {
+    content: "";
+    position: absolute;
+    inset: -8px;
+    border: 3px solid #fff3d277;
+    border-radius: 50%;
+}
+
+.planet .rings::after {
+    content: "";
+    position: absolute;
+    inset: 2px -1px;
+    border-top: 3px solid #fff9;
+    border-bottom: 3px solid #382919;
+    border-radius: 50%;
+}
+
+/* Planet palette */
+
+.planet.mercury {
+    --planet-light: #e0ddd8;
+    --planet-mid: #898b91;
+    --planet-dark: #333744;
+    --planet-glow: #cbd5e1;
+}
+
+.planet.venus {
+    --planet-light: #fff0bb;
+    --planet-mid: #e6a35c;
+    --planet-dark: #803d20;
+    --planet-glow: #fdba74;
+}
+
+.planet.earth {
+    --planet-light: #7dd3fc;
+    --planet-mid: #1266b3;
+    --planet-dark: #071b48;
+    --planet-glow: #38bdf8;
+}
+
+.planet.mars {
+    --planet-light: #ffb59b;
+    --planet-mid: #c74b35;
+    --planet-dark: #571713;
+    --planet-glow: #fb634e;
+}
+
+.planet.jupiter {
+    --planet-light: #ffe6bc;
+    --planet-mid: #c78b5b;
+    --planet-dark: #68402c;
+    --planet-glow: #fdba74;
+}
+
+.planet.saturn {
+    --planet-light: #fff0ce;
+    --planet-mid: #c8a87c;
+    --planet-dark: #64462e;
+    --planet-glow: #e7c995;
+}
+
+.planet.uranus {
+    --planet-light: #c3fbff;
+    --planet-mid: #43c1d8;
+    --planet-dark: #07516f;
+    --planet-glow: #67e8f9;
+}
+
+.planet.neptune {
+    --planet-light: #8acbff;
+    --planet-mid: #1a64d5;
+    --planet-dark: #07164f;
+    --planet-glow: #3b82f6;
+}
+
+.planet.pluto {
+    --planet-light: #f1d7c7;
+    --planet-mid: #a18b80;
+    --planet-dark: #41333b;
+    --planet-glow: #d8c5e8;
+}
+
+.planet.moon {
+    --planet-light: #fff;
+    --planet-mid: #aeb6c5;
+    --planet-dark: #434c5c;
+    --planet-glow: #cbd5e1;
+}
+
+.planet.sun {
+    --planet-light: #fffbd0;
+    --planet-mid: #ffb000;
+    --planet-dark: #df3905;
+    --planet-glow: #ffb21c;
+}
+
+.planet.eclipse {
+    --planet-light: #101525;
+    --planet-mid: #030712;
+    --planet-dark: #000;
+    --planet-glow: #f9a8d4;
+}
+
+.planet.aurora {
+    --planet-light: #a7f3d0;
+    --planet-mid: #059669;
+    --planet-dark: #064e3b;
+    --planet-glow: #34d399;
+}
+
+.planet.meteor {
+    --planet-light: #fff7ed;
+    --planet-mid: #fb923c;
+    --planet-dark: #7c2d12;
+    --planet-glow: #fdba74;
+}
+
+.planet.galaxy {
+    --planet-light: #f5d0fe;
+    --planet-mid: #7c3aed;
+    --planet-dark: #160e4d;
+    --planet-glow: #a78bfa;
+}
+
+.planet.nebula {
+    --planet-light: #f5d0fe;
+    --planet-mid: #c026d3;
+    --planet-dark: #4a044e;
+    --planet-glow: #e879f9;
+}
+
+.planet.ocean {
+    --planet-light: #a5f3fc;
+    --planet-mid: #0284c7;
+    --planet-dark: #082f49;
+    --planet-glow: #22d3ee;
+}
+
+.planet.volcano {
+    --planet-light: #fed7aa;
+    --planet-mid: #ea580c;
+    --planet-dark: #431407;
+    --planet-glow: #f97316;
+}
+
+.planet.forest {
+    --planet-light: #bbf7d0;
+    --planet-mid: #15803d;
+    --planet-dark: #052e16;
+    --planet-glow: #4ade80;
+}
+
+.planet.desert {
+    --planet-light: #fef3c7;
+    --planet-mid: #d97706;
+    --planet-dark: #713f12;
+    --planet-glow: #fbbf24;
+}
+
+.planet.arctic {
+    --planet-light: #fff;
+    --planet-mid: #93c5fd;
+    --planet-dark: #1e40af;
+    --planet-glow: #bfdbfe;
+}
+
+.planet.tropical {
+    --planet-light: #a7f3d0;
+    --planet-mid: #0d9488;
+    --planet-dark: #134e4a;
+    --planet-glow: #5eead4;
+}
+
+.planet.daylight {
+    --planet-light: #fffbd0;
+    --planet-mid: #facc15;
+    --planet-dark: #ca8a04;
+    --planet-glow: #fde047;
+}
+
+.planet.midnight {
+    --planet-light: #e0e7ff;
+    --planet-mid: #475569;
+    --planet-dark: #0f172a;
+    --planet-glow: #818cf8;
+}
+
+/* ========================================
+   PLANET RISE AND SET ANIMATION
+======================================== */
+
+.planet.leaving {
+    animation: planet-set 1.45s ease-in forwards;
+}
+
+.planet.rising {
+    animation: planet-rise 1.8s cubic-bezier(.2,.8,.2,1) forwards;
+}
+
+@keyframes planet-set {
+    from {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateY(110px) scale(.7);
+        opacity: 0;
+    }
+}
+
+@keyframes planet-rise {
+    from {
+        transform: translateY(110px) scale(.7);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* ========================================
+   LEFT TITLE AND SUBTITLE
+======================================== */
+
+.theme-info {
+    position: relative;
+    z-index: 2;
+    flex: 0 0 110px;
+    min-width: 0;
+    text-shadow: 0 2px 5px #000;
+}
+
+.theme-info h2 {
+    margin: 0 0 4px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.theme-info p {
+    margin: 0;
+    color: #dbeafe;
+    font-size: 10px;
+    line-height: 1.1;
+}
+
+/* ========================================
+   NAVIGATION LINKS
+======================================== */
+
+.nav-links {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    min-width: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
+}
+
+.nav-links a {
+    padding: 8px 9px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+
+    color: #f8fafc;
+    font-size: 11px;
+    text-decoration: none;
+    white-space: nowrap;
+    text-shadow: 0 1px 4px #000;
+
+    transition:
+        background .25s ease,
+        border-color .25s ease,
+        transform .25s ease;
+}
+
+.nav-links a:hover {
+    transform: translateY(-2px);
+    background: color-mix(in srgb, var(--accent) 30%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 75%, transparent);
+}
+
+.nav-links a.active {
+    background: color-mix(in srgb, var(--accent) 25%, #020617);
+    border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+/* ========================================
+   RIGHT-SIDE THEME SWITCH
+======================================== */
+
+.theme-switch {
+    position: relative;
+    z-index: 4;
+    flex: 0 0 114px;
+    height: 43px;
+    padding: 4px;
+
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    border: 1px solid color-mix(in srgb, var(--accent) 80%, white);
+    border-radius: 30px;
+    background: #020617eF;
+
+    box-shadow:
+        0 0 12px color-mix(in srgb, var(--accent) 30%, transparent),
+        inset 0 0 8px #ffffff08;
+}
+
+.theme-switch button {
+    position: relative;
+    width: 33px;
+    height: 33px;
+    padding: 0;
+    flex-shrink: 0;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid #ffffff24;
+    border-radius: 50%;
+    background: #0f172a;
+    cursor: pointer;
+
+    transition:
+        transform .3s ease,
+        border-color .3s ease,
+        box-shadow .3s ease;
+}
+
+.theme-switch button:hover {
+    transform: scale(1.12);
+}
+
+.theme-switch button.selected {
+    border-color: #ffffffa8;
+    box-shadow: 0 0 11px var(--accent);
+}
+
+/* Small realistic planet icons */
+
+.mini-planet {
+    position: relative;
+    width: 25px;
+    height: 25px;
+    display: block;
+    border-radius: 50%;
+    overflow: visible;
+
+    background:
+        radial-gradient(
+            circle at 28% 23%,
+            #fff 0%,
+            #ffffffb8 4%,
+            transparent 21%
+        ),
+        radial-gradient(
+            circle at 32% 30%,
+            var(--planet-light) 0%,
+            var(--planet-mid) 45%,
+            var(--planet-dark) 82%,
+            #000 100%
+        );
+
+    box-shadow:
+        inset -4px -3px 6px #000c,
+        inset 2px 2px 4px #ffffff55,
+        0 0 5px var(--planet-glow);
+}
+
+.mini-planet::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+
+    background:
+        radial-gradient(ellipse at 67% 30%, #0005 0 12%, transparent 17%),
+        radial-gradient(ellipse at 40% 67%, #fff3 0 10%, transparent 16%);
+}
+
+/* Tiny Earth continents */
+
+.mini-planet.earth::before {
+    background:
+        radial-gradient(ellipse at 62% 31%, #86c95c 0 13%, transparent 14%),
+        radial-gradient(ellipse at 33% 56%, #70b75c 0 16%, transparent 17%),
+        radial-gradient(ellipse at 72% 70%, #a4ce69 0 10%, transparent 11%);
+}
+
+/* Tiny Jupiter bands */
+
+.mini-planet.jupiter::before {
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent 0 3px,
+            #f5e1c2b0 4px 5px,
+            #78472d88 6px 7px
+        );
+}
+
+/* Tiny Saturn rings */
+
+.mini-planet.has-rings::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    width: 35px;
+    height: 11px;
+    top: 7px;
+    left: -5px;
+    border: 2px solid #d8c59b;
+    border-radius: 50%;
+    transform: rotate(-24deg);
+    box-shadow: 0 0 2px #fff7;
+}
+
+/* ========================================
+   RESPONSIVE LAYOUT
+======================================== */
+
+@media (max-width: 950px) {
+    .gallery {
+        grid-template-columns: 1fr;
+        width: min(760px, 96%);
+    }
+}
+
+@media (max-width: 560px) {
+    .gallery {
+        width: 96%;
+        gap: 9px;
+    }
+
+    .theme-nav {
+        height: 64px;
+        padding: 6px 7px;
+        gap: 4px;
+    }
+
+    .theme-info {
+        flex-basis: 75px;
+    }
+
+    .theme-info h2 {
+        font-size: 11px;
+    }
+
+    .theme-info p {
+        font-size: 8px;
+    }
+
+    .nav-links {
+        gap: 0;
+    }
+
+    .nav-links a {
+        padding: 7px 4px;
+        font-size: 9px;
+    }
+
+    .theme-switch {
+        flex-basis: 76px;
+        height: 36px;
+        padding: 3px;
+    }
+
+    .theme-switch button {
+        width: 27px;
+        height: 27px;
+    }
+
+    .mini-planet {
+        width: 20px;
+        height: 20px;
+    }
+
+    .mini-planet.has-rings::after {
+        width: 28px;
+        height: 8px;
+        top: 6px;
+        left: -4px;
+    }
+
+    .planet-stage {
+        left: 36px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+    <h1>Worlds<span style="color:#a78bfa">.</span></h1>
+    <p>24 UNIQUE THEMES &nbsp;•&nbsp; 12 ANIMATED TRANSFORMATIONS</p>
+</header>
+
+<main class="gallery" id="gallery"></main>
+
+<script>
+/* ========================================
+   ALL 12 ORIGINAL THEME PAIRS
+======================================== */
+
+const themePairs = [
+    [
+        {
+            name: "Mercury",
+            subtitle: "Cratered World",
+            type: "mercury",
+            bg: "#050a18",
+            secondary: "#64748b",
+            accent: "#94a3b8",
+            size: 100
+        },
+        {
+            name: "Venus",
+            subtitle: "Golden Atmosphere",
+            type: "venus",
+            bg: "#36130a",
+            secondary: "#f97316",
+            accent: "#fb923c",
+            size: 112
+        }
+    ],
+
+    [
+        {
+            name: "Earth",
+            subtitle: "Our Living World",
+            type: "earth",
+            bg: "#031b3a",
+            secondary: "#0284c7",
+            accent: "#22d3ee",
+            size: 108
+        },
+        {
+            name: "Mars",
+            subtitle: "Red Frontier",
+            type: "mars",
+            bg: "#300b0c",
+            secondary: "#b91c1c",
+            accent: "#fb7185",
+            size: 108
+        }
+    ],
+
+    [
+        {
+            name: "Jupiter",
+            subtitle: "Gas Giant",
+            type: "jupiter",
+            bg: "#24130a",
+            secondary: "#b45309",
+            accent: "#fbbf24",
+            size: 112
+        },
+        {
+            name: "Saturn",
+            subtitle: "World of Rings",
+            type: "saturn",
+            bg: "#211b11",
+            secondary: "#a16207",
+            accent: "#fcd34d",
+            size: 104,
+            rings: true
+        }
+    ],
+
+    [
+        {
+            name: "Uranus",
+            subtitle: "Ice Giant",
+            type: "uranus",
+            bg: "#052b46",
+            secondary: "#0891b2",
+            accent: "#67e8f9",
+            size: 108
+        },
+        {
+            name: "Neptune",
+            subtitle: "Deep Blue World",
+            type: "neptune",
+            bg: "#07133e",
+            secondary: "#1d4ed8",
+            accent: "#60a5fa",
+            size: 108
+        }
+    ],
+
+    [
+        {
+            name: "Pluto",
+            subtitle: "Dwarf Planet",
+            type: "pluto",
+            bg: "#171321",
+            secondary: "#78716c",
+            accent: "#c4b5fd",
+            size: 100
+        },
+        {
+            name: "Moon",
+            subtitle: "Lunar Landscape",
+            type: "moon",
+            bg: "#08111e",
+            secondary: "#475569",
+            accent: "#cbd5e1",
+            size: 108
+        }
+    ],
+
+    [
+        {
+            name: "Sun",
+            subtitle: "Stellar Fire",
+            type: "sun",
+            bg: "#451405",
+            secondary: "#ea580c",
+            accent: "#fbbf24",
+            size: 112
+        },
+        {
+            name: "Eclipse",
+            subtitle: "Shadow of the Sun",
+            type: "eclipse",
+            bg: "#100d20",
+            secondary: "#7c3aed",
+            accent: "#f0abfc",
+            size: 104
+        }
+    ],
+
+    [
+        {
+            name: "Aurora",
+            subtitle: "Northern Lights",
+            type: "aurora",
+            bg: "#03251f",
+            secondary: "#059669",
+            accent: "#34d399",
+            size: 104
+        },
+        {
+            name: "Meteor",
+            subtitle: "Meteor Shower",
+            type: "meteor",
+            bg: "#09152c",
+            secondary: "#7c3aed",
+            accent: "#818cf8",
+            size: 98
+        }
+    ],
+
+    [
+        {
+            name: "Galaxy",
+            subtitle: "Spiral Universe",
+            type: "galaxy",
+            bg: "#100b36",
+            secondary: "#6d28d9",
+            accent: "#a78bfa",
+            size: 108
+        },
+        {
+            name: "Nebula",
+            subtitle: "Cosmic Clouds",
+            type: "nebula",
+            bg: "#320b39",
+            secondary: "#c026d3",
+            accent: "#e879f9",
+            size: 108
+        }
+    ],
+
+    [
+        {
+            name: "Ocean",
+            subtitle: "Deep Blue Sea",
+            type: "ocean",
+            bg: "#03293c",
+            secondary: "#0891b2",
+            accent: "#22d3ee",
+            size: 106
+        },
+        {
+            name: "Volcano",
+            subtitle: "Fire and Lava",
+            type: "volcano",
+            bg: "#351006",
+            secondary: "#ea580c",
+            accent: "#fb923c",
+            size: 104
+        }
+    ],
+
+    [
+        {
+            name: "Forest",
+            subtitle: "Emerald Wilderness",
+            type: "forest",
+            bg: "#052e16",
+            secondary: "#15803d",
+            accent: "#4ade80",
+            size: 104
+        },
+        {
+            name: "Desert",
+            subtitle: "Golden Dunes",
+            type: "desert",
+            bg: "#422006",
+            secondary: "#d97706",
+            accent: "#fbbf24",
+            size: 104
+        }
+    ],
+
+    [
+        {
+            name: "Arctic",
+            subtitle: "Frozen Expanse",
+            type: "arctic",
+            bg: "#102d4c",
+            secondary: "#60a5fa",
+            accent: "#bfdbfe",
+            size: 104
+        },
+        {
+            name: "Tropical",
+            subtitle: "Island Paradise",
+            type: "tropical",
+            bg: "#063b36",
+            secondary: "#0d9488",
+            accent: "#5eead4",
+            size: 104
+        }
+    ],
+
+    [
+        {
+            name: "Daylight",
+            subtitle: "Bright Open Skies",
+            type: "daylight",
+            bg: "#16385d",
+            secondary: "#facc15",
+            accent: "#fde047",
+            size: 104
+        },
+        {
+            name: "Midnight",
+            subtitle: "Stars After Dark",
+            type: "midnight",
+            bg: "#020617",
+            secondary: "#312e81",
+            accent: "#818cf8",
+            size: 104
+        }
+    ]
+];
+
+/* ========================================
+   CREATE PLANETS AND ICONS
+======================================== */
+
+const gallery = document.getElementById("gallery");
+
+function createPlanet(theme, mini = false) {
+    const planet = document.createElement("div");
+
+    planet.className = mini
+        ? `mini-planet ${theme.type}`
+        : `planet ${theme.type}`;
+
+    if (theme.rings) {
+        planet.classList.add("has-rings");
+
+        if (!mini) {
+            const rings = document.createElement("span");
+            rings.className = "rings";
+            planet.appendChild(rings);
+        }
+    }
+
+    if (!mini) {
+        planet.style.setProperty("--planet-size", `${theme.size}px`);
+    }
+
+    return planet;
+}
+
+/* ========================================
+   BUILD EACH HORIZONTAL NAVBAR
+======================================== */
+
+function createNavbar(pair, startingIndex) {
+    let currentIndex = startingIndex;
+
+    const nav = document.createElement("section");
+    nav.className = "theme-nav";
+
+    const environmentA = document.createElement("div");
+    environmentA.className = "environment first";
+
+    const environmentB = document.createElement("div");
+    environmentB.className = "environment second";
+
+    const atmosphere = document.createElement("div");
+    atmosphere.className = "atmosphere";
+
+    const sunset = document.createElement("div");
+    sunset.className = "sunset";
+
+    const planetStage = document.createElement("div");
+    planetStage.className = "planet-stage";
+
+    const info = document.createElement("div");
+    info.className = "theme-info";
+
+    const title = document.createElement("h2");
+    const subtitle = document.createElement("p");
+
+    info.append(title, subtitle);
+
+    const links = document.createElement("nav");
+    links.className = "nav-links";
+    links.setAttribute("aria-label", "Main navigation");
+
+    ["Home", "Login", "Signup", "Contact"].forEach((label, index) => {
+        const link = document.createElement("a");
+        link.href = "#";
+        link.textContent = label;
+
+        if (index === 0) {
+            link.classList.add("active");
+        }
+
+        link.addEventListener("click", event => {
+            event.preventDefault();
+
+            links.querySelectorAll("a").forEach(item => {
+                item.classList.remove("active");
+            });
+
+            link.classList.add("active");
+        });
+
+        links.appendChild(link);
+    });
+
+    const themeSwitch = document.createElement("div");
+    themeSwitch.className = "theme-switch";
+
+    const buttons = [];
+
+    pair.forEach((theme, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.title = `Switch to ${theme.name}`;
+        button.setAttribute("aria-label", `Switch to ${theme.name}`);
+
+        button.appendChild(createPlanet(theme, true));
+
+        button.addEventListener("click", () => {
+            switchTheme(index);
+        });
+
+        themeSwitch.appendChild(button);
+        buttons.push(button);
+    });
+
+    nav.append(
+        environmentA,
+        environmentB,
+        atmosphere,
+        sunset,
+        planetStage,
+        info,
+        links,
+        themeSwitch
+    );
+
+    function makeBackground(theme) {
+        return `
+            radial-gradient(
+                ellipse at 48% 125%,
+                ${theme.secondary}b0 0%,
+                transparent 65%
+            ),
+            radial-gradient(
+                ellipse at 75% 15%,
+                ${theme.accent}35 0%,
+                transparent 55%
+            ),
+            linear-gradient(
+                110deg,
+                ${theme.bg},
+                #020617 100%
+            )
+        `;
+    }
+
+    function applyTheme(theme, animate = false) {
+        nav.style.setProperty("--bg", theme.bg);
+        nav.style.setProperty("--secondary", theme.secondary);
+        nav.style.setProperty("--accent", theme.accent);
+
+        nav.style.borderColor = theme.accent;
+
+        title.textContent = theme.name;
+        subtitle.textContent = theme.subtitle;
+
+        buttons.forEach((button, index) => {
+            button.classList.toggle("selected", index === currentIndex);
+
+            button.setAttribute(
+                "aria-pressed",
+                String(index === currentIndex)
+            );
+        });
+
+        atmosphere.style.background = `
+            linear-gradient(
+                0deg,
+                ${theme.secondary}77 0%,
+                transparent 60%
+            ),
+            linear-gradient(
+                90deg,
+                ${theme.bg} 0%,
+                transparent 50%,
+                ${theme.bg} 100%
+            )
+        `;
+
+        if (!animate) {
+            environmentA.style.background = makeBackground(theme);
+            environmentB.style.background = makeBackground(theme);
+        } else {
+            environmentB.style.background = makeBackground(theme);
+
+            nav.classList.add("changing");
+
+            window.setTimeout(() => {
+                environmentA.style.background = makeBackground(theme);
+                nav.classList.remove("changing");
+            }, 4500);
+        }
+    }
+
+    function switchTheme(nextIndex) {
+        if (nextIndex === currentIndex) return;
+
+        const nextTheme = pair[nextIndex];
+
+        const oldPlanet = planetStage.querySelector(".planet");
+
+        if (oldPlanet) {
+            oldPlanet.classList.remove("rising");
+            oldPlanet.classList.add("leaving");
+        }
+
+        currentIndex = nextIndex;
+
+        applyTheme(nextTheme, true);
+
+        const newPlanet = createPlanet(nextTheme);
+        newPlanet.classList.add("rising");
+
+        planetStage.appendChild(newPlanet);
+
+        window.setTimeout(() => {
+            if (oldPlanet && oldPlanet.parentNode) {
+                oldPlanet.remove();
+            }
+
+            newPlanet.classList.remove("rising");
+        }, 1900);
+    }
+
+    planetStage.appendChild(createPlanet(pair[currentIndex]));
+    applyTheme(pair[currentIndex]);
+
+    return nav;
+}
+
+/* ========================================
+   24 NAVBARS — ORIGINAL TWO-COLUMN LAYOUT
+======================================== */
+
+themePairs.forEach(pair => {
+    gallery.appendChild(createNavbar(pair, 0));
+    gallery.appendChild(createNavbar(pair, 1));
+});
+</script>
+
+</body>
+</html>
