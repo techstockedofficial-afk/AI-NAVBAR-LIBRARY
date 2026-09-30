@@ -1,0 +1,893 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Worlds — Animated Environments</title>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Inter,Arial,sans-serif;
+  background:#f5f6fa;
+  color:#182033;
+}
+
+button,a{font:inherit}
+
+.page-header{
+  text-align:center;
+  padding:38px 16px 24px;
+}
+
+.page-header h1{
+  font-size:clamp(32px,5vw,48px);
+  font-weight:900;
+  letter-spacing:-2px;
+}
+
+.page-header p{
+  margin-top:10px;
+  color:#7c8496;
+  font-size:14px;
+}
+
+.nav-gallery{
+  width:min(1500px,100%);
+  margin:auto;
+  padding:16px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+}
+
+/* NAVBAR */
+
+.theme-nav{
+  --fg:#fff;
+  --accent:#a78bfa;
+  --glow:#a78bfa44;
+
+  position:relative;
+  isolation:isolate;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  min-width:0;
+  min-height:96px;
+  padding:12px;
+  overflow:hidden;
+
+  color:var(--fg);
+  background:#10152b;
+  border:1px solid var(--accent);
+  border-radius:20px;
+  box-shadow:0 5px 18px var(--glow);
+
+  transition:color 1s,border-color 1s,box-shadow 1s;
+}
+
+/* ENVIRONMENT CROSSFADE */
+
+.environment-layer{
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  opacity:0;
+  border-radius:inherit;
+  pointer-events:none;
+
+  transition:opacity 4.5s cubic-bezier(.4,0,.2,1);
+}
+
+.environment-layer.visible{opacity:1}
+
+/* SUNSET ATMOSPHERE */
+
+.environment-atmosphere{
+  position:absolute;
+  inset:0;
+  z-index:0;
+  opacity:0;
+  pointer-events:none;
+
+  background:linear-gradient(
+    180deg,
+    rgba(255,226,177,.02),
+    rgba(255,157,90,.65) 42%,
+    rgba(214,83,128,.45) 68%,
+    rgba(55,40,120,.2)
+  );
+}
+
+.theme-nav.changing .environment-atmosphere{
+  animation:atmosphere 4.5s ease-in-out forwards;
+}
+
+@keyframes atmosphere{
+  0%{opacity:0}
+  20%{opacity:.16}
+  45%{opacity:.8;filter:saturate(1.5)}
+  68%{opacity:.35}
+  100%{opacity:0;filter:saturate(1)}
+}
+
+/* LEFT ANIMATED SCENE */
+
+.scene{
+  position:relative;
+  z-index:1;
+  isolation:isolate;
+  overflow:hidden;
+  flex-shrink:0;
+
+  width:76px;
+  height:66px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border:1px solid #ffffff28;
+  border-radius:14px;
+  background:#ffffff10;
+
+  transition:background 1s;
+}
+
+/* Landscape horizon */
+
+.scene::after{
+  content:"";
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  height:17px;
+  z-index:1;
+  opacity:.68;
+  background:var(--accent);
+
+  clip-path:polygon(
+    0 100%,0 65%,19% 20%,36% 78%,
+    58% 5%,77% 65%,100% 25%,100% 100%
+  );
+
+  transition:background 1s;
+}
+
+/* STARS */
+
+.scene-stars{
+  position:absolute;
+  inset:0;
+  z-index:0;
+  opacity:0;
+  transition:opacity 1.5s;
+}
+
+.scene-stars::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:
+    radial-gradient(circle at 17% 19%,#fff 0 1px,transparent 1.7px),
+    radial-gradient(circle at 74% 22%,#fff 0 1px,transparent 1.7px),
+    radial-gradient(circle at 87% 48%,#fff 0 1px,transparent 1.7px),
+    radial-gradient(circle at 36% 34%,#fff 0 1px,transparent 1.7px),
+    radial-gradient(circle at 59% 12%,#fff 0 1px,transparent 1.7px),
+    radial-gradient(circle at 24% 53%,#fff 0 1px,transparent 1.7px);
+}
+
+.scene.night .scene-stars{opacity:1}
+
+/* CELESTIAL BODY */
+
+.scene-icon{
+  position:relative;
+  z-index:2;
+  display:block;
+  font-size:34px;
+  line-height:1;
+  transform-origin:center;
+  will-change:transform,opacity;
+}
+
+/* Old planet sets */
+
+.scene-icon.leaving{
+  animation:planet-set 1.5s cubic-bezier(.55,0,.9,.45) forwards;
+}
+
+@keyframes planet-set{
+  0%{
+    opacity:1;
+    transform:translateY(0) scale(1) rotate(0);
+    filter:brightness(1);
+  }
+  45%{
+    opacity:.85;
+    transform:translateY(10px) scale(.92) rotate(-7deg);
+    filter:brightness(1.1);
+  }
+  100%{
+    opacity:0;
+    transform:translateY(39px) scale(.65) rotate(-14deg);
+    filter:brightness(.7);
+  }
+}
+
+/* New planet rises */
+
+.scene-icon.rising{
+  animation:planet-rise 1.85s cubic-bezier(.16,.75,.28,1) forwards;
+}
+
+@keyframes planet-rise{
+  0%{
+    opacity:0;
+    transform:translateY(38px) scale(.65) rotate(12deg);
+    filter:brightness(.65);
+  }
+  55%{
+    opacity:1;
+    transform:translateY(-4px) scale(1.08) rotate(-3deg);
+    filter:brightness(1.25);
+  }
+  75%{
+    transform:translateY(2px) scale(.97) rotate(1deg);
+  }
+  100%{
+    opacity:1;
+    transform:translateY(0) scale(1) rotate(0);
+    filter:brightness(1);
+  }
+}
+
+/* Theme-specific scene glow */
+
+.scene[data-kind="sun"] .scene-icon{
+  filter:drop-shadow(0 0 5px #ffca55);
+}
+
+.scene[data-kind="planet"] .scene-icon{
+  filter:drop-shadow(0 0 3px #ffffff40);
+}
+
+.scene[data-kind="meteor"] .scene-icon{
+  filter:drop-shadow(0 0 5px #a5f3fc);
+}
+
+/* TITLE */
+
+.theme-info{
+  position:relative;
+  z-index:1;
+  width:90px;
+  min-width:66px;
+  flex-shrink:0;
+}
+
+.theme-label{
+  display:block;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+
+.theme-caption{
+  display:block;
+  margin-top:5px;
+  font-size:10px;
+  opacity:.76;
+}
+
+/* NAV LINKS */
+
+.nav-links{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  flex:1;
+  min-width:0;
+}
+
+.nav-link{
+  padding:10px 10px;
+  border-radius:12px;
+  color:var(--fg);
+  opacity:.9;
+  text-decoration:none;
+  white-space:nowrap;
+  font-size:12px;
+  font-weight:650;
+
+  transition:background .3s,transform .3s,opacity .3s;
+}
+
+.nav-link:hover{
+  opacity:1;
+  transform:translateY(-2px);
+  background:#ffffff20;
+}
+
+.nav-link.active{
+  background:var(--accent);
+  color:var(--active-text,var(--fg));
+}
+
+/* TOGGLE */
+
+.theme-switch{
+  position:relative;
+  z-index:2;
+  flex-shrink:0;
+  width:94px;
+  height:46px;
+  padding:5px;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  border:1px solid var(--accent);
+  border-radius:40px;
+  background:#00000025;
+  cursor:pointer;
+
+  transition:background 1s,border-color 1s;
+}
+
+.switch-icon{
+  position:relative;
+  z-index:1;
+  width:32px;
+  height:32px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:17px;
+  user-select:none;
+}
+
+.switch-knob{
+  position:absolute;
+  top:4px;
+  left:4px;
+  z-index:2;
+
+  width:36px;
+  height:36px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border:2px solid var(--accent);
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 2px 8px #0003;
+  font-size:17px;
+  pointer-events:none;
+
+  transition:
+    left .55s cubic-bezier(.2,.8,.2,1),
+    border-color .8s,
+    color .8s;
+}
+
+.theme-switch[data-side="right"] .switch-knob{
+  left:52px;
+}
+
+.theme-switch:focus-visible{
+  outline:3px solid var(--accent);
+  outline-offset:3px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:1150px){
+  .nav-gallery{
+    grid-template-columns:1fr;
+    max-width:850px;
+  }
+}
+
+@media(max-width:600px){
+  .nav-gallery{padding:10px;gap:12px}
+
+  .theme-nav{
+    flex-wrap:wrap;
+    min-height:125px;
+    gap:9px;
+    padding:10px;
+  }
+
+  .scene{width:52px;height:46px}
+  .scene-icon{font-size:28px}
+
+  .theme-info{
+    width:auto;
+    flex:1;
+  }
+
+  .theme-switch{width:82px;height:42px}
+
+  .switch-icon{width:28px;height:28px;font-size:15px}
+
+  .switch-knob{
+    width:32px;
+    height:32px;
+    top:4px;
+    left:4px;
+  }
+
+  .theme-switch[data-side="right"] .switch-knob{
+    left:44px;
+  }
+
+  .nav-links{
+    order:3;
+    flex-basis:100%;
+    justify-content:space-between;
+    border-top:1px solid #ffffff28;
+    padding-top:6px;
+  }
+
+  .nav-link{padding:8px 9px;font-size:11px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .environment-layer,.switch-knob,.scene{
+    transition-duration:.01ms!important;
+  }
+
+  .theme-nav.changing .environment-atmosphere,
+  .scene-icon.leaving,.scene-icon.rising{
+    animation-duration:.01ms!important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="page-header">
+  <p class="text-xs font-black tracking-[.25em] uppercase"
+     style="color:#8b5cf6">
+    INTERACTIVE DESIGN COLLECTION
+  </p>
+  <h1 class="mt-3">Worlds<span style="color:#8b5cf6">.</span></h1>
+  <p>24 unique themes · 12 animated transformations</p>
+</header>
+
+<main>
+  <section id="navGallery" class="nav-gallery"
+           aria-label="Themed navigation bars"></section>
+</main>
+
+<footer class="text-center py-8 text-xs text-gray-400">
+  One toggle. A whole new world.
+</footer>
+
+<script>
+/* ========================================
+   12 DIFFERENT THEME PAIRS
+======================================== */
+
+const themePairs = [
+
+/* 1 — INNER SOLAR SYSTEM */
+[
+{
+name:"Mercury",icon:"☄️",scene:"☄️",kind:"planet",
+bg:"linear-gradient(120deg,#171923,#575569,#24202d)",
+fg:"#f5f5f5",accent:"#a8a29e",glow:"#a8a29e44",
+light:false,caption:"Cratered world"
+},
+{
+name:"Venus",icon:"🪐",scene:"🪐",kind:"planet",
+bg:"linear-gradient(120deg,#4c1d15,#c87936,#f4c078)",
+fg:"#fff7ed",accent:"#fbbf75",glow:"#fbbf7544",
+light:false,caption:"Golden atmosphere"
+}
+],
+
+/* 2 — EARTH AND MARS */
+[
+{
+name:"Earth",icon:"🌍",scene:"🌍",kind:"planet",
+bg:"linear-gradient(120deg,#063b78,#087e8b,#064e3b)",
+fg:"#ecfeff",accent:"#67e8f9",glow:"#67e8f944",
+light:false,caption:"Blue living world"
+},
+{
+name:"Mars",icon:"🔴",scene:"🔴",kind:"planet",
+bg:"linear-gradient(120deg,#450a0a,#b93826,#7f1d1d)",
+fg:"#fff1ed",accent:"#fb8067",glow:"#fb806744",
+light:false,caption:"Rust-red planet"
+}
+],
+
+/* 3 — JUPITER AND SATURN */
+[
+{
+name:"Jupiter",icon:"🟠",scene:"🟠",kind:"planet",
+bg:"linear-gradient(120deg,#3e2017,#b66b3b,#65351f)",
+fg:"#fff7ed",accent:"#f6bd83",glow:"#f6bd8344",
+light:false,caption:"Giant gas world"
+},
+{
+name:"Saturn",icon:"🪐",scene:"🪐",kind:"planet",
+bg:"linear-gradient(120deg,#392b16,#ad8b45,#57421e)",
+fg:"#fffbea",accent:"#e9cf83",glow:"#e9cf8344",
+light:false,caption:"World of rings"
+}
+],
+
+/* 4 — OUTER PLANETS */
+[
+{
+name:"Uranus",icon:"🔵",scene:"🔵",kind:"planet",
+bg:"linear-gradient(120deg,#164e63,#38bdf8,#0e7490)",
+fg:"#ecfeff",accent:"#a5f3fc",glow:"#67e8f944",
+light:false,caption:"Ice giant"
+},
+{
+name:"Neptune",icon:"🔵",scene:"🌊",kind:"planet",
+bg:"linear-gradient(120deg,#101b72,#2454d8,#172554)",
+fg:"#eff6ff",accent:"#93c5fd",glow:"#60a5fa55",
+light:false,caption:"Deep blue world"
+}
+],
+
+/* 5 — PLUTO AND THE MOON */
+[
+{
+name:"Pluto",icon:"🪨",scene:"🪨",kind:"planet",
+bg:"linear-gradient(120deg,#29212a,#88716d,#493635)",
+fg:"#fff7ed",accent:"#d6b8a8",glow:"#d6b8a844",
+light:false,caption:"Distant dwarf planet"
+},
+{
+name:"Moon",icon:"🌙",scene:"🌙",kind:"planet",
+bg:"linear-gradient(120deg,#101827,#39445c,#172033)",
+fg:"#f1f5f9",accent:"#cbd5e1",glow:"#cbd5e144",
+light:false,caption:"Lunar landscape"
+}
+],
+
+/* 6 — SUN AND ECLIPSE */
+[
+{
+name:"Sun",icon:"☀️",scene:"☀️",kind:"sun",
+bg:"linear-gradient(120deg,#9a3412,#f97316,#fbbf24)",
+fg:"#fffbea",accent:"#fde047",glow:"#fde04755",
+light:false,caption:"Stellar fire"
+},
+{
+name:"Eclipse",icon:"🌑",scene:"🌑",kind:"planet",
+bg:"linear-gradient(120deg,#080b20,#25214b,#090d25)",
+fg:"#f5f3ff",accent:"#c4b5fd",glow:"#a78bfa44",
+light:false,caption:"Shadow of the sun"
+}
+],
+
+/* 7 — AURORA AND METEORS */
+[
+{
+name:"Aurora",icon:"🌌",scene:"🌌",kind:"planet",
+bg:"linear-gradient(120deg,#052e2b,#087f8c,#312e81)",
+fg:"#ecfeff",accent:"#5eead4",glow:"#2dd4bf55",
+light:false,caption:"Northern lights"
+},
+{
+name:"Meteor",icon:"☄️",scene:"☄️",kind:"meteor",
+bg:"linear-gradient(120deg,#090d27,#27235a,#0f172a)",
+fg:"#f8fafc",accent:"#a5b4fc",glow:"#818cf855",
+light:false,caption:"Meteor shower"
+}
+],
+
+/* 8 — GALAXY AND NEBULA */
+[
+{
+name:"Galaxy",icon:"🌀",scene:"🌀",kind:"planet",
+bg:"linear-gradient(120deg,#10072f,#32106c,#180b46)",
+fg:"#f5eaff",accent:"#c4b5fd",glow:"#a78bfa55",
+light:false,caption:"Spiral universe"
+},
+{
+name:"Nebula",icon:"☁️",scene:"☁️",kind:"planet",
+bg:"linear-gradient(120deg,#500724,#be185d,#4c1d95)",
+fg:"#fff0fa",accent:"#f9a8d4",glow:"#f472b655",
+light:false,caption:"Cosmic clouds"
+}
+],
+
+/* 9 — OCEAN AND VOLCANO */
+[
+{
+name:"Ocean",icon:"🌊",scene:"🌊",kind:"planet",
+bg:"linear-gradient(120deg,#082f49,#0369a1,#0e7490)",
+fg:"#f0f9ff",accent:"#7dd3fc",glow:"#38bdf855",
+light:false,caption:"Deep blue sea"
+},
+{
+name:"Volcano",icon:"🌋",scene:"🌋",kind:"sun",
+bg:"linear-gradient(120deg,#1c1010,#7f1d1d,#ea580c)",
+fg:"#fff7ed",accent:"#fb923c",glow:"#f9731655",
+light:false,caption:"Lava and fire"
+}
+],
+
+/* 10 — FOREST AND DESERT */
+[
+{
+name:"Forest",icon:"🌲",scene:"🌲",kind:"planet",
+bg:"linear-gradient(120deg,#022c22,#047857,#064e3b)",
+fg:"#ecfdf5",accent:"#6ee7b7",glow:"#34d39944",
+light:false,caption:"Emerald wilderness"
+},
+{
+name:"Desert",icon:"🌵",scene:"🌵",kind:"sun",
+bg:"linear-gradient(120deg,#78350f,#d97706,#fcd34d)",
+fg:"#fffbea",accent:"#fcd34d",glow:"#fbbf2455",
+light:false,caption:"Golden dunes"
+}
+],
+
+/* 11 — ARCTIC AND TROPICAL */
+[
+{
+name:"Arctic",icon:"❄️",scene:"🏔️",kind:"planet",
+bg:"linear-gradient(120deg,#164e63,#bae6fd,#e0f2fe)",
+fg:"#123b54",accent:"#7dd3fc",glow:"#38bdf855",
+light:true,caption:"Frozen wilderness"
+},
+{
+name:"Tropical",icon:"🌴",scene:"🌴",kind:"sun",
+bg:"linear-gradient(120deg,#064e3b,#16a34a,#f59e0b)",
+fg:"#f0fdf4",accent:"#bef264",glow:"#a3e63544",
+light:false,caption:"Island paradise"
+}
+],
+
+/* 12 — DAY AND NIGHT */
+[
+{
+name:"Daylight",icon:"☀️",scene:"🌤️",kind:"sun",
+bg:"linear-gradient(120deg,#fef3c7,#7dd3fc,#38bdf8)",
+fg:"#153a5b",accent:"#fde68a",glow:"#facc1544",
+light:true,caption:"Bright open skies"
+},
+{
+name:"Midnight",icon:"🌙",scene:"🌙",kind:"planet",
+bg:"linear-gradient(120deg,#020617,#172554,#111827)",
+fg:"#eff6ff",accent:"#818cf8",glow:"#818cf855",
+light:false,caption:"Stars after dark"
+}
+]
+
+];
+
+/* ========================================
+   BUILD ALL 24 NAVIGATION BARS
+======================================== */
+
+const gallery=document.getElementById("navGallery");
+
+themePairs.forEach((pair,pairIndex)=>{
+  pair.forEach((theme,sideIndex)=>{
+    const nav=document.createElement("nav");
+
+    nav.className="theme-nav";
+    nav.dataset.pair=pairIndex;
+    nav.dataset.side=sideIndex;
+    nav.dataset.light=String(theme.light);
+
+    nav.innerHTML=`
+      <div class="environment-layer environment-a"></div>
+      <div class="environment-layer environment-b"></div>
+      <div class="environment-atmosphere"></div>
+
+      <div class="scene">
+        <div class="scene-stars"></div>
+        <span class="scene-icon"></span>
+      </div>
+
+      <div class="theme-info">
+        <span class="theme-label"></span>
+        <span class="theme-caption"></span>
+      </div>
+
+      <div class="nav-links">
+        <a href="#home" class="nav-link active">Home</a>
+        <a href="#login" class="nav-link">Login</a>
+        <a href="#signup" class="nav-link">Signup</a>
+        <a href="#contact" class="nav-link">Contact</a>
+      </div>
+
+      <button type="button" class="theme-switch"
+        aria-pressed="false" aria-label="Switch theme">
+        <span class="switch-icon left-icon"></span>
+        <span class="switch-icon right-icon"></span>
+        <span class="switch-knob"></span>
+      </button>
+    `;
+
+    nav.querySelectorAll(".nav-link").forEach(link=>{
+      link.addEventListener("click",event=>{
+        event.preventDefault();
+
+        nav.querySelectorAll(".nav-link").forEach(item=>{
+          item.classList.remove("active");
+        });
+
+        link.classList.add("active");
+      });
+    });
+
+    nav.querySelector(".theme-switch").addEventListener("click",()=>{
+      const nextSide=Number(nav.dataset.side)===0?1:0;
+      setTheme(nav,pair[nextSide],nextSide,true);
+    });
+
+    gallery.appendChild(nav);
+    setTheme(nav,theme,sideIndex,false);
+  });
+});
+
+/* ========================================
+   ANIMATE THE LEFT-HAND PLANET / OBJECT
+======================================== */
+
+function animateSceneChange(nav,theme){
+  const icon=nav.querySelector(".scene-icon");
+
+  // Cancel a previous animation if toggled again.
+  clearTimeout(nav._sceneTimer);
+  clearTimeout(nav._riseTimer);
+
+  icon.classList.remove("leaving","rising");
+  void icon.offsetWidth;
+
+  // The outgoing object sinks beneath the horizon.
+  icon.classList.add("leaving");
+
+  nav._sceneTimer=setTimeout(()=>{
+    icon.textContent=theme.scene;
+    icon.dataset.kind=theme.kind;
+
+    icon.classList.remove("leaving");
+    void icon.offsetWidth;
+
+    // The incoming object rises into the sky.
+    icon.classList.add("rising");
+
+    nav._riseTimer=setTimeout(()=>{
+      icon.classList.remove("rising");
+      nav._riseTimer=null;
+    },1900);
+
+    nav._sceneTimer=null;
+  },1500);
+}
+
+/* ========================================
+   CHANGE ENVIRONMENT AND NAVBAR THEME
+======================================== */
+
+function setTheme(nav,theme,side,animate=true){
+  const pair=themePairs[Number(nav.dataset.pair)];
+  const toggle=nav.querySelector(".theme-switch");
+  const scene=nav.querySelector(".scene");
+  const icon=nav.querySelector(".scene-icon");
+
+  const layerA=nav.querySelector(".environment-a");
+  const layerB=nav.querySelector(".environment-b");
+
+  const initialized=nav.dataset.initialized==="true";
+
+  nav.dataset.side=side;
+  nav.dataset.light=String(theme.light);
+
+  nav.style.setProperty("--fg",theme.fg);
+  nav.style.setProperty("--accent",theme.accent);
+  nav.style.setProperty("--glow",theme.glow);
+
+  if(!initialized){
+    layerA.style.background=theme.bg;
+    layerB.style.background=theme.bg;
+
+    layerA.classList.add("visible");
+    layerB.classList.remove("visible");
+
+    nav.dataset.activeLayer="a";
+    nav.dataset.initialized="true";
+
+    icon.textContent=theme.scene;
+    icon.dataset.kind=theme.kind;
+  }
+
+  else if(animate){
+    const oldLayer=
+      nav.dataset.activeLayer==="a"?layerA:layerB;
+
+    const newLayer=
+      nav.dataset.activeLayer==="a"?layerB:layerA;
+
+    newLayer.style.background=theme.bg;
+    newLayer.classList.remove("visible");
+
+    nav.classList.remove("changing");
+    clearTimeout(nav._environmentTimer);
+
+    void nav.offsetWidth;
+    nav.classList.add("changing");
+
+    requestAnimationFrame(()=>{
+      newLayer.classList.add("visible");
+      oldLayer.classList.remove("visible");
+    });
+
+    nav.dataset.activeLayer=
+      newLayer===layerA?"a":"b";
+
+    nav._environmentTimer=setTimeout(()=>{
+      nav.classList.remove("changing");
+      nav._environmentTimer=null;
+    },4500);
+
+    animateSceneChange(nav,theme);
+  }
+
+  // Different nighttime environments show stars.
+  const nightThemes=[
+    "Moon","Eclipse","Meteor","Galaxy",
+    "Nebula","Midnight","Neptune","Pluto"
+  ];
+
+  scene.classList.toggle(
+    "night",
+    nightThemes.includes(theme.name)
+  );
+
+  // Update the scene style.
+  if(!animate){
+    icon.dataset.kind=theme.kind;
+  }
+
+  nav.querySelector(".theme-label").textContent=theme.name;
+  nav.querySelector(".theme-caption").textContent=theme.caption;
+
+  // Update toggle icons and moving knob.
+  toggle.dataset.side=side===0?"left":"right";
+
+  toggle.querySelector(".left-icon").textContent=pair[0].icon;
+  toggle.querySelector(".right-icon").textContent=pair[1].icon;
+
+  toggle.setAttribute("aria-pressed",String(side===1));
+
+  toggle.setAttribute(
+    "aria-label",
+    `Switch ${theme.name} to ${pair[side===0?1:0].name}`
+  );
+
+  const knob=toggle.querySelector(".switch-knob");
+  knob.textContent=theme.icon;
+  knob.style.color=theme.accent;
+  knob.style.borderColor=theme.accent;
+}
+</script>
+
+</body>
+</html>
